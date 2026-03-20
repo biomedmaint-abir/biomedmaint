@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>BiomédMaint</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F0F4F8;--card:#fff;--primary:#1B4F8A;--pl:#E8F0FB;
+  --green:#2ECC8F;--gl:#E6FAF3;--red:#E53E3E;--rl:#FFF5F5;
+  --orange:#F6AD55;--ol:#FFFAF0;--text:#1A202C;--gray:#718096;
+  --border:#E2E8F0;--nav:68px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+
+/* LOGIN */
+#login{min-height:100vh;display:flex;flex-direction:column}
+.lhdr{background:var(--primary);padding:70px 28px 36px;color:#fff}
+.llogo{font-size:48px;margin-bottom:12px}
+.ltitle{font-size:26px;font-weight:700;margin-bottom:6px}
+.lsub{font-size:13px;opacity:.75}
+.lbody{flex:1;padding:28px 20px;display:flex;flex-direction:column;gap:14px}
+.lfoot{text-align:center;font-size:11px;color:var(--gray);padding:0 20px 28px}
+label{font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px}
+input,select,textarea{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:12px;font-size:15px;color:var(--text);background:#fff;outline:none;font-family:inherit;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+.hint{background:var(--pl);border-radius:10px;padding:12px;font-size:12px;color:var(--primary);line-height:1.6}
+
+/* APP */
+#app{display:none}
+.hdr{background:var(--primary);padding:50px 18px 16px;color:#fff;position:sticky;top:0;z-index:100}
+.hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.hdr h1{font-size:20px;font-weight:700}
+.hdr p{font-size:12px;opacity:.75}
+.ava{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer}
+
+/* PAGES */
+.page{display:none;padding:14px 14px calc(var(--nav) + 14px)}
+.page.on{display:block}
+
+/* CARDS */
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.07);cursor:pointer;border-left:4px solid transparent;transition:transform .12s}
+.card:active{transform:scale(.98)}
+.c-red{border-left-color:var(--red)}
+.c-orange{border-left-color:var(--orange)}
+.c-green{border-left-color:var(--green)}
+.c-blue{border-left-color:var(--primary)}
+.ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.ct{font-size:15px;font-weight:600}
+.cs{font-size:12px;color:var(--gray);margin-top:2px}
+.cf{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+/* TAGS */
+.tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.tg{background:var(--gl);color:#1a7a54}
+.tr{background:var(--rl);color:var(--red)}
+.to{background:var(--ol);color:#b7791f}
+.tb{background:var(--pl);color:var(--primary)}
+.tgr{background:#F7FAFC;color:var(--gray)}
+
+/* KPI */
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.kcard{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.kcard.full{grid-column:1/-1}
+.klabel{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.kval{font-size:26px;font-weight:700;color:var(--primary);line-height:1}
+.kunit{font-size:12px;color:var(--gray);margin-top:3px}
+.kbadge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;margin-top:6px}
+
+/* SECTION */
+.sec{font-size:15px;font-weight:700;margin:18px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.sec span{font-size:12px;color:var(--primary);font-weight:500;cursor:pointer}
+
+/* BOUTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:14px;border:none;font-size:15px;font-weight:600;cursor:pointer;width:100%;font-family:inherit;transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--primary);color:#fff}
+.btn-g{background:var(--green);color:#fff}
+.btn-o{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-r{background:var(--red);color:#fff}
+.btn-sm{padding:8px 14px;font-size:12px;border-radius:10px;width:auto}
+
+/* FAB */
+.fab{position:fixed;bottom:calc(var(--nav) + 14px);right:18px;width:54px;height:54px;background:var(--primary);color:#fff;border-radius:50%;border:none;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(27,79,138,.4);cursor:pointer;z-index:50;transition:transform .12s}
+.fab:active{transform:scale(.92)}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:var(--nav);background:var(--card);border-top:1px solid var(--border);display:flex;z-index:200;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none}
+.ni-icon{font-size:22px}
+.ni-lbl{font-size:10px;font-weight:500;color:var(--gray)}
+.ni.on .ni-lbl{color:var(--primary);font-weight:700}
+.ni.on .ni-icon{transform:scale(1.12)}
+
+/* STOCK BAR */
+.sbar{height:7px;background:var(--border);border-radius:4px;margin-top:8px;overflow:hidden}
+.sfill{height:100%;border-radius:4px}
+.sok{background:var(--green)}
+.slow{background:var(--orange)}
+.sempty{background:var(--red)}
+
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 190px)}
+.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0}
+.msg{max-width:85%;padding:11px 14px;border-radius:18px;font-size:14px;line-height:1.5}
+.msg.bot{background:var(--card);align-self:flex-start;border-bottom-left-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.msg.user{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.mtime{font-size:10px;opacity:.55;margin-top:4px}
+.cin{display:flex;gap:8px;padding:10px 0;border-top:1px solid var(--border)}
+.cinput{flex:1;padding:11px 14px;border:2px solid var(--border);border-radius:22px;font-size:14px;outline:none;font-family:inherit}
+.cinput:focus{border-color:var(--primary)}
+.csend{width:42px;height:42px;background:var(--primary);color:#fff;border:none;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* MODAL */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center}
+.moverlay.on{display:flex}
+.modal{background:var(--card);width:100%;max-width:430px;border-radius:22px 22px 0 0;padding:18px 18px 32px;max-height:88vh;overflow-y:auto}
+.mhandle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px}
+.mtitle{font-size:17px;font-weight:700;margin-bottom:18px}
+.fgrp{margin-bottom:14px}
+
+/* ALERTE */
+.abanner{background:var(--rl);border:1px solid #FEB2B2;border-radius:12px;padding:11px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--red);font-weight:500}
+
+/* FILTRE BTNS */
+.filtres{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.filtres::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login">
+  <div class="lhdr">
+    <div class="llogo">🏥</div>
+    <div class="ltitle">BiomédMaint</div>
+    <div class="lsub">Gestion intelligente de maintenance biomédicale</div>
+  </div>
+  <div class="lbody">
+    <div><label>Email</label>
+      <input type="email" id="em" placeholder="votre@email.ma" value="abir@biomedmaint.ma">
+    </div>
+    <div><label>Mot de passe</label>
+      <input type="password" id="pw" placeholder="••••••••" value="Tech@2024">
+    </div>
+    <button class="btn btn-p" id="btnlogin">Se connecter</button>
+    <div class="hint">
+      <strong>Comptes de démo :</strong><br>
+      abir@biomedmaint.ma / Tech@2024 (Technicien)<br>
+      karim@biomedmaint.ma / Ing@2024 (Ingénieur)
+    </div>
+  </div>
+  <div class="lfoot">BiomédMaint v1.0 — PFE Génie Biomédical 2024</div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div><h1 id="ptitle">Tableau de bord</h1><p id="psub">Bonjour 👋</p></div>
+      <div class="ava" id="ava">?</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page on" id="p-dash">
+    <div class="abanner" id="ab" style="display:none">⚠️ <span id="abt">Alerte stock</span></div>
+    <div class="kgrid">
+      <div class="kcard"><div class="klabel">Équipements</div><div class="kval">4</div><div class="kunit">total parc</div><div class="kbadge tr">1 en panne</div></div>
+      <div class="kcard"><div class="klabel">MTTR</div><div class="kval">4.5</div><div class="kunit">heures moy.</div><div class="kbadge tb">temps réparation</div></div>
+      <div class="kcard"><div class="klabel">Disponibilité</div><div class="kval">87%</div><div class="kunit">taux global</div><div class="kbadge tg">✓ objectif 85%</div></div>
+      <div class="kcard"><div class="klabel">Coût ce mois</div><div class="kval">19.3k</div><div class="kunit">MAD</div><div class="kbadge to">interventions</div></div>
+    </div>
+    <div class="sec">Interventions actives <span onclick="nav('interventions',document.querySelectorAll('.ni')[2])">Voir tout →</span></div>
+    <div class="card c-red" onclick="openModal('m-detail')">
+      <div class="ch"><div><div class="ct">Canon Aplio i900</div><div class="cs">Maternité</div></div><span class="tag tr">CRITIQUE</span></div>
+      <div class="cf"><span class="tag tgr">🔧 Corrective</span><span class="tag tr">EN COURS</span><span class="tag tgr">⏱ 2 jours</span></div>
+    </div>
+    <div class="card c-orange">
+      <div class="ch"><div><div class="ct">GE Logiq E10</div><div class="cs">Cardiologie</div></div><span class="tag to">NORMALE</span></div>
+      <div class="cf"><span class="tag tgr">🔍 Préventive</span><span class="tag to">EN ATTENTE</span><span class="tag tgr">⏱ 3h</span></div>
+    </div>
+    <div class="sec">Pièces critiques</div>
+    <div class="card c-red">
+      <div class="ch"><div><div class="ct">Écran LCD 15 pouces</div><div class="cs">ECR-15P-004</div></div><span class="tag tr">RUPTURE</span></div>
+      <div class="sbar"><div class="sfill sempty" style="width:0%"></div></div>
+      <div style="font-size:12px;color:var(--red);margin-top:6px;font-weight:600">Stock : 0 / Seuil : 1</div>
+    </div>
+    <div class="card c-orange">
+      <div class="ch"><div><div class="ct">Bloc alimentation 24V</div><div class="cs">ALI-BLOC-003</div></div><span class="tag to">SEUIL BAS</span></div>
+      <div class="sbar"><div class="sfill slow" style="width:50%"></div></div>
+      <div style="font-size:12px;color:#b7791f;margin-top:6px;font-weight:600">Stock : 1 / Seuil : 1</div>
+    </div>
+  </div>
+
+  <!-- ÉQUIPEMENTS -->
+  <div class="page" id="p-equipements">
+    <div class="card c-green">
+      <div class="ch"><div><div class="ct">Philips EPIQ 7</div><div class="cs">PH-EPIQ7-001 · Radiologie Salle 1</div></div><span class="tag tg">EN SERVICE</span></div>
+      <div class="cf"><span class="tag tgr">📅 2019</span><span class="tag tb">Contrat actif</span><span class="tag tgr">450k MAD</span></div>
+    </div>
+    <div class="card c-green">
+      <div class="ch"><div><div class="ct">GE Logiq E10</div><div class="cs">GE-LOGIQ-002 · Cardiologie</div></div><span class="tag tg">EN SERVICE</span></div>
+      <div class="cf"><span class="tag tgr">📅 2020</span><span class="tag tb">Contrat actif</span><span class="tag tgr">520k MAD</span></div>
+    </div>
+    <div class="card c-red">
+      <div class="ch"><div><div class="ct">Canon Aplio i900</div><div class="cs">CN-APLIO-003 · Maternité</div></div><span class="tag tr">EN PANNE</span></div>
+      <div class="cf"><span class="tag tgr">📅 2021</span><span class="tag tr">Sans contrat</span><span class="tag tgr">380k MAD</span></div>
+    </div>
+    <div class="card c-green">
+      <div class="ch"><div><div class="ct">Siemens ACUSON S3000</div><div class="cs">SI-ACUSON-004 · Urgences</div></div><span class="tag tg">EN SERVICE</span></div>
+      <div class="cf"><span class="tag tgr">📅 2018</span><span class="tag to">Garantie expirée</span><span class="tag tgr">290k MAD</span></div>
+    </div>
+  </div>
+
+  <!-- INTERVENTIONS -->
+  <div class="page" id="p-interventions">
+    <div class="filtres">
+      <button class="btn btn-p btn-sm" onclick="filtre('all',this)">Toutes</button>
+      <button class="btn btn-o btn-sm" onclick="filtre('EN_COURS',this)">En cours</button>
+      <button class="btn btn-o btn-sm" onclick="filtre('EN_ATTENTE',this)">En attente</button>
+      <button class="btn btn-o btn-sm" onclick="filtre('CLOTUREE',this)">Clôturées</button>
+    </div>
+    <div class="card c-red" data-s="EN_COURS" onclick="openModal('m-detail')">
+      <div class="ch"><div><div class="ct">Canon Aplio i900 · Maternité</div><div class="cs">Absence image doppler, bruit sonde</div></div><span class="tag tr">EN COURS</span></div>
+      <div class="cf"><span class="tag tr">CRITIQUE</span><span class="tag tgr">Corrective</span><span class="tag tgr">17 mars 2026</span></div>
+    </div>
+    <div class="card c-orange" data-s="EN_ATTENTE">
+      <div class="ch"><div><div class="ct">GE Logiq E10 · Cardiologie</div><div class="cs">Maintenance préventive trimestrielle</div></div><span class="tag to">EN ATTENTE</span></div>
+      <div class="cf"><span class="tag tb">NORMALE</span><span class="tag tgr">Préventive</span><span class="tag tgr">19 mars 2026</span></div>
+    </div>
+    <div class="card c-green" data-s="CLOTUREE">
+      <div class="ch"><div><div class="ct">Philips EPIQ 7 · Radiologie</div><div class="cs">Image floue côté droit, code E045</div></div><span class="tag tg">CLÔTURÉE</span></div>
+      <div class="cf"><span class="tag to">HAUTE</span><span class="tag tgr">Corrective</span><span class="tag tgr">19 300 MAD</span></div>
+    </div>
+    <div class="card c-green" data-s="CLOTUREE">
+      <div class="ch"><div><div class="ct">Siemens ACUSON · Urgences</div><div class="cs">Écran qui clignote, arrêt intempestif</div></div><span class="tag tg">CLÔTURÉE</span></div>
+      <div class="cf"><span class="tag tb">NORMALE</span><span class="tag tgr">Corrective</span><span class="tag tgr">5 400 MAD</span></div>
+    </div>
+  </div>
+
+  <!-- ASSISTANT IA -->
+  <div class="page" id="p-ia">
+    <div class="chat-wrap">
+      <div class="msgs" id="msgs">
+        <div class="msg bot">
+          Bonjour ! Je suis votre assistant de diagnostic. 🤖<br><br>
+          Décrivez les <strong>symptômes</strong> de la panne ou entrez un <strong>code erreur</strong> (E045, E012, U017, U034, F001, S022).
+          <div class="mtime">Assistant IA · v0.0</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-o btn-sm" onclick="quick('E045')">Code E045</button>
+          <button class="btn btn-o btn-sm" onclick="quick('U017')">Code U017</button>
+          <button class="btn btn-o btn-sm" onclick="quick('image floue')">Image floue</button>
+        </div>
+      </div>
+      <div class="cin">
+        <input class="cinput" id="ci" placeholder="Symptômes ou code erreur...">
+        <button class="csend" id="csend">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOCK -->
+  <div class="page" id="p-stock">
+    <div class="kgrid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+      <div class="kcard" style="padding:12px"><div class="klabel" style="font-size:9px">Pièces</div><div class="kval" style="font-size:22px">5</div></div>
+      <div class="kcard" style="padding:12px"><div class="klabel" style="font-size:9px">Alertes</div><div class="kval" style="font-size:22px;color:var(--red)">2</div></div>
+      <div class="kcard" style="padding:12px"><div class="klabel" style="font-size:9px">Ruptures</div><div class="kval" style="font-size:22px;color:var(--red)">1</div></div>
+    </div>
+    <div class="card c-green">
+      <div class="ch"><div><div class="ct">Transducteur linéaire 12MHz</div><div class="cs">TR-LIN-001</div></div><span class="tag tg">OK</span></div>
+      <div class="sbar"><div class="sfill sok" style="width:100%"></div></div>
+      <div style="font-size:12px;color:var(--gray);margin-top:5px;display:flex;justify-content:space-between"><span>Stock : <b>2</b></span><span>Seuil : 1</span><span>18 500 MAD/u</span></div>
+    </div>
+    <div class="card c-green">
+      <div class="ch"><div><div class="ct">Transducteur convexe 3.5MHz</div><div class="cs">TR-CONV-002</div></div><span class="tag tg">OK</span></div>
+      <div class="sbar"><div class="sfill sok" style="width:100%"></div></div>
+      <div style="font-size:12px;color:var(--gray);margin-top:5px;display:flex;justify-content:space-between"><span>Stock : <b>3</b></span><span>Seuil : 2</span><span>15 200 MAD/u</span></div>
+    </div>
+    <div class="card c-orange">
+      <div class="ch"><div><div class="ct">Bloc alimentation 24V</div><div class="cs">ALI-BLOC-003</div></div><span class="tag to">SEUIL BAS</span></div>
+      <div class="sbar"><div class="sfill slow" style="width:50%"></div></div>
+      <div style="font-size:12px;color:#b7791f;margin-top:5px;display:flex;justify-content:space-between"><span>Stock : <b>1</b></span><span>Seuil : 1</span><span>4 800 MAD/u</span></div>
+    </div>
+    <div class="card c-red">
+      <div class="ch"><div><div class="ct">Écran LCD 15 pouces</div><div class="cs">ECR-15P-004</div></div><span class="tag tr">RUPTURE</span></div>
+      <div class="sbar"><div class="sfill sempty" style="width:0%"></div></div>
+      <div style="font-size:12px;color:var(--red);margin-top:5px;display:flex;justify-content:space-between"><span>Stock : <b>0</b></span><span>Seuil : 1</span><span>7 200 MAD/u</span></div>
+    </div>
+    <div class="card c-green">
+      <div class="ch"><div><div class="ct">Module RAM 8Go</div><div class="cs">RAM-8G-005</div></div><span class="tag tg">OK</span></div>
+      <div class="sbar"><div class="sfill sok" style="width:100%"></div></div>
+      <div style="font-size:12px;color:var(--gray);margin-top:5px;display:flex;justify-content:space-between"><span>Stock : <b>5</b></span><span>Seuil : 2</span><span>1 200 MAD/u</span></div>
+    </div>
+  </div>
+
+  <button class="fab" id="fab" onclick="openModal('m-new')">+</button>
+
+  <nav class="nav">
+    <button class="ni on" onclick="nav('dash',this)"><span class="ni-icon">🏠</span><span class="ni-lbl">Accueil</span></button>
+    <button class="ni" onclick="nav('equipements',this)"><span class="ni-icon">🔬</span><span class="ni-lbl">Équipements</span></button>
+    <button class="ni" onclick="nav('interventions',this)"><span class="ni-icon">🔧</span><span class="ni-lbl">Interventions</span></button>
+    <button class="ni" onclick="nav('ia',this)"><span class="ni-icon">🤖</span><span class="ni-lbl">Assistant IA</span></button>
+    <button class="ni" onclick="nav('stock',this)"><span class="ni-icon">📦</span><span class="ni-lbl">Stock</span></button>
+  </nav>
+</div>
+
+<!-- MODAL NOUVELLE INTERVENTION -->
+<div class="moverlay" id="m-new" onclick="if(event.target===this)closeModal('m-new')">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mtitle">Nouvelle intervention</div>
+    <div class="fgrp"><label>Équipement</label>
+      <select class="form-input" style="width:100%">
+        <option>Philips EPIQ 7 — Radiologie</option>
+        <option>GE Logiq E10 — Cardiologie</option>
+        <option>Canon Aplio i900 — Maternité</option>
+        <option>Siemens ACUSON — Urgences</option>
+      </select>
+    </div>
+    <div class="fgrp"><label>Type</label>
+      <select style="width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-size:15px;font-family:inherit;background:#fff;-webkit-appearance:none">
+        <option>Corrective</option><option>Préventive</option><option>Vérification</option>
+      </select>
+    </div>
+    <div class="fgrp"><label>Priorité</label>
+      <select style="width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-size:15px;font-family:inherit;background:#fff;-webkit-appearance:none">
+        <option>Normale</option><option>Haute</option><option>Critique</option>
+      </select>
+    </div>
+    <div class="fgrp"><label>Description</label>
+      <textarea id="ndesc" rows="3" style="width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-size:15px;font-family:inherit;resize:none" placeholder="Décrivez la panne..."></textarea>
+    </div>
+    <div class="fgrp"><label>Code erreur (optionnel)</label>
+      <input type="text" id="ncode" placeholder="Ex: E045, U017..." style="width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-size:15px;font-family:inherit">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="btn btn-o" onclick="closeModal('m-new')" style="flex:1">Annuler</button>
+      <button class="btn btn-p" onclick="creer()" style="flex:2">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL INTERVENTION -->
+<div class="moverlay" id="m-detail" onclick="if(event.target===this)closeModal('m-detail')">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mtitle">Canon Aplio i900 — Maternité</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <span class="tag tr">CRITIQUE</span><span class="tag to">EN COURS</span><span class="tag tgr">Corrective</span>
+    </div>
+    <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:12px">
+      <div style="font-size:12px;color:var(--gray);margin-bottom:4px">Symptômes</div>
+      <div style="font-size:14px;font-weight:500">Absence image doppler, bruit anormal sur la sonde</div>
+    </div>
+    <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--gray);margin-bottom:4px">Dates</div>
+      <div style="font-size:13px">📅 Détectée : 17 mars 2026</div>
+      <div style="font-size:13px;margin-top:4px">🔧 Début : 17 mars 2026</div>
+    </div>
+    <button class="btn btn-g" style="margin-bottom:10px" onclick="closeModal('m-detail');nav('ia',document.querySelectorAll('.ni')[3])">🤖 Consulter l'assistant IA</button>
+    <button class="btn btn-p" style="margin-bottom:10px" onclick="cloturer()">✓ Clôturer l'intervention</button>
+    <button class="btn btn-o" onclick="closeModal('m-detail')">Fermer</button>
+  </div>
+</div>
+
+<script>
+// ── COMPTES DEMO
+var USERS = {
+  'abir@biomedmaint.ma':  {prenom:'Abir',  role:'TECHNICIEN',     ini:'AF'},
+  'karim@biomedmaint.ma': {prenom:'Karim', role:'INGENIEUR',      ini:'KB'},
+  'admin@biomedmaint.ma': {prenom:'Admin', role:'ADMINISTRATEUR', ini:'AD'}
+};
+var PASSWORDS = {
+  'abir@biomedmaint.ma':'Tech@2024',
+  'karim@biomedmaint.ma':'Ing@2024',
+  'admin@biomedmaint.ma':'Admin@2024'
+};
+
+// ── REGLES IA
+var REGLES = {
+  'E045':{causes:['Défaut transducteur — 90%','Câble sonde endommagé — 75%'],pieces:['Transducteur linéaire 12MHz','Câble connexion sonde'],mttr:3.5},
+  'E012':{causes:['Défaut alimentation — 90%','Carte mère défectueuse — 70%'],pieces:['Bloc alimentation 24V','Carte mère principale'],mttr:5.0},
+  'U017':{causes:['Erreur software — 90%','Corruption mémoire — 65%'],pieces:['Module RAM 8Go','SSD système'],mttr:2.0},
+  'U034':{causes:['Surchauffe processeur — 85%','Ventilateur défaillant — 70%'],pieces:['Ventilateur refroidissement','Pâte thermique'],mttr:1.5},
+  'F001':{causes:['Défaut écran — 90%','Carte graphique — 60%'],pieces:['Écran LCD 15 pouces','Carte graphique'],mttr:4.0},
+  'S022':{causes:['Perte signal Doppler — 85%','Cristaux usés — 75%'],pieces:['Transducteur convexe 3.5MHz'],mttr:6.0}
+};
+
+// ── LOGIN
+document.getElementById('btnlogin').addEventListener('click', function() {
+  var email = document.getElementById('em').value.trim().toLowerCase();
+  var pwd   = document.getElementById('pw').value;
+  if (!email || !pwd) { alert('Veuillez remplir tous les champs'); return; }
+  if (!USERS[email] || PASSWORDS[email] !== pwd) { alert('Email ou mot de passe incorrect'); return; }
+  var u = USERS[email];
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display   = 'block';
+  document.getElementById('psub').textContent    = 'Bonjour, ' + u.prenom + ' \uD83D\uDC4B';
+  document.getElementById('ava').textContent     = u.ini;
+  if (u.role === 'INGENIEUR' || u.role === 'ADMINISTRATEUR') {
+    document.getElementById('ab').style.display  = 'flex';
+    document.getElementById('abt').textContent   = '2 pièces sous le seuil — commande requise';
+  }
+});
+
+document.getElementById('pw').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') document.getElementById('btnlogin').click();
+});
+
+// ── NAVIGATION
+function nav(page, btn) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
+  var el = document.getElementById('p-' + page);
+  if (el) el.classList.add('on');
+  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  var titles = {dash:'Tableau de bord', equipements:'Équipements', interventions:'Interventions', ia:'Assistant IA', stock:'Stock pièces'};
+  document.getElementById('ptitle').textContent = titles[page] || page;
+  var fab = document.getElementById('fab');
+  fab.style.display = (page === 'ia' || page === 'stock') ? 'none' : 'flex';
+}
+
+// ── MODALS
+function openModal(id)  { document.getElementById(id).classList.add('on'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('on'); document.body.style.overflow=''; }
+
+// ── FILTRES INTERVENTIONS
+function filtre(s, btn) {
+  document.querySelectorAll('#p-interventions .card').forEach(function(c){
+    c.style.display = (s === 'all' || c.dataset.s === s) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.filtres .btn').forEach(function(b){
+    b.className = (b === btn) ? 'btn btn-p btn-sm' : 'btn btn-o btn-sm';
+  });
+}
+
+// ── CRÉER INTERVENTION
+function creer() {
+  closeModal('m-new');
+  var desc = document.getElementById('ndesc').value;
+  var code = document.getElementById('ncode').value;
+  document.getElementById('ndesc').value = '';
+  document.getElementById('ncode').value = '';
+  var notif = document.createElement('div');
+  notif.style.cssText = 'position:fixed;top:110px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+  notif.textContent = '✓ Intervention créée !';
+  document.body.appendChild(notif);
+  setTimeout(function(){ notif.remove(); }, 2500);
+  if (code || desc) {
+    setTimeout(function(){
+      nav('ia', document.querySelectorAll('.ni')[3]);
+      setTimeout(function(){ addMsg(desc || code, 'user'); setTimeout(function(){ analyser(code || desc); }, 700); }, 300);
+    }, 600);
+  }
+}
+
+// ── CLÔTURER
+function cloturer() {
+  closeModal('m-detail');
+  var notif = document.createElement('div');
+  notif.style.cssText = 'position:fixed;top:110px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+  notif.textContent = '✓ Intervention clôturée !';
+  document.body.appendChild(notif);
+  setTimeout(function(){ notif.remove(); }, 2500);
+}
+
+// ── CHATBOT IA
+document.getElementById('csend').addEventListener('click', function() {
+  var v = document.getElementById('ci').value.trim();
+  if (!v) return;
+  addMsg(v, 'user');
+  document.getElementById('ci').value = '';
+  setTimeout(function(){ analyser(v); }, 700);
+});
+document.getElementById('ci').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') document.getElementById('csend').click();
+});
+function quick(t) { addMsg(t, 'user'); setTimeout(function(){ analyser(t); }, 700); }
+
+function analyser(input) {
+  var code  = input.toUpperCase().replace(/\s/g,'');
+  var regle = REGLES[code];
+  var html;
+  if (regle) {
+    html = '<strong>🎯 Diagnostic — Code ' + code + '</strong><br><br><strong>Causes probables :</strong><br>' +
+      regle.causes.map(function(c){ return '• ' + c; }).join('<br>') +
+      '<br><br><strong>Pièces à vérifier :</strong><br>' +
+      regle.pieces.map(function(p){ return '• ' + p; }).join('<br>') +
+      '<br><br><strong>⏱ MTTR estimé : ' + regle.mttr + 'h</strong>' +
+      '<div class="mtime">Source : règles fabricant · confiance 90%</div>';
+    addMsgHTML(html, 'bot');
+    setTimeout(function() {
+      var d = document.createElement('div');
+      d.style.cssText = 'display:flex;gap:8px;margin-top:4px';
+      d.innerHTML = '<button class="btn btn-g btn-sm" onclick="feedback(true,this.parentNode)">✓ Correct</button>' +
+                    '<button class="btn btn-o btn-sm" onclick="feedback(false,this.parentNode)">✗ Corriger</button>';
+      document.getElementById('msgs').appendChild(d);
+      scrollMsgs();
+    }, 100);
+  } else {
+    var mots = input.toLowerCase().split(' ');
+    if (mots.some(function(m){ return ['floue','flou','image','qualite','resolution'].indexOf(m) > -1; })) {
+      html = '📷 <strong>Problème image</strong><br><br>Causes possibles :<br>• Cristaux transducteur dégradés<br>• Câble sonde endommagé<br>• Réglages TGC incorrects<div class="mtime">Similarité historique · 65%</div>';
+    } else if (mots.some(function(m){ return ['bruit','son','sonde','doppler'].indexOf(m) > -1; })) {
+      html = '🔊 <strong>Problème sonde</strong><br><br>Causes possibles :<br>• Connexion sonde défectueuse<br>• Cristaux usés<br><br>MTTR estimé : 2-4h<div class="mtime">Similarité historique · 70%</div>';
+    } else if (mots.some(function(m){ return ['ecran','affichage','noir','clignote'].indexOf(m) > -1; })) {
+      html = '🖥️ <strong>Problème écran</strong><br><br>Pièce probable : Écran LCD 15 pouces<br>⚠️ Stock actuel : 0 — commande urgente !<div class="mtime">Règles + stock · 80%</div>';
+    } else {
+      html = '🔍 Symptômes non reconnus.<br><br>Essayez un code erreur :<br><strong>E045, E012, U017, U034, F001, S022</strong><div class="mtime">Diagnostic manuel recommandé</div>';
+    }
+    addMsgHTML(html, 'bot');
+  }
+}
+
+function feedback(ok, el) {
+  el.remove();
+  addMsgHTML(ok ? '✅ Merci ! Ce cas enrichit le modèle IA.' : '✏️ Correction notée. L\'ingénieur sera notifié.', 'bot');
+}
+function addMsg(t, type) {
+  var d = document.createElement('div');
+  d.className = 'msg ' + type;
+  d.textContent = t;
+  document.getElementById('msgs').appendChild(d);
+  scrollMsgs();
+}
+function addMsgHTML(h, type) {
+  var d = document.createElement('div');
+  d.className = 'msg ' + type;
+  d.innerHTML = h;
+  document.getElementById('msgs').appendChild(d);
+  scrollMsgs();
+}
+function scrollMsgs() {
+  var m = document.getElementById('msgs');
+  m.scrollTop = m.scrollHeight;
+}
+</script>
+</body>
+</html>
