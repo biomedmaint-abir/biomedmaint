@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BiomédMaint</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#F0F4F8;color:#1A202C}
+#pg-login{min-height:100vh;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+.lhdr{background:#1B4F8A;padding:60px 28px 36px;color:white}
+.lhdr .logo{font-size:48px;margin-bottom:12px}
+.lhdr .titre{font-size:26px;font-weight:700}
+.lhdr .sous{font-size:13px;opacity:.75;margin-top:6px}
+.lbody{flex:1;padding:28px 20px;display:flex;flex-direction:column;gap:14px;background:white}
+.lftr{text-align:center;font-size:11px;color:#718096;padding:14px 20px;background:white}
+label{display:block;font-size:12px;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+input,select,textarea{width:100%;padding:14px;border:2px solid #E2E8F0;border-radius:12px;font-size:15px;outline:none;font-family:inherit;background:white}
+input:focus,select:focus,textarea:focus{border-color:#1B4F8A}
+.btnp{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;background:#1B4F8A;color:white}
+#msg-err{padding:12px;border-radius:10px;font-size:14px;display:none;background:#FFF5F5;color:#E53E3E;margin-top:4px}
+#pg-app{display:none}
+.ahdr{background:#1B4F8A;padding:14px 20px;color:white;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.ahdr h1{font-size:18px}.ahdr p{font-size:12px;opacity:.75;margin-top:2px}
+.bdeco{background:#E53E3E;color:white;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.nav{background:white;border-bottom:1px solid #E2E8F0;display:flex;overflow-x:auto;position:sticky;top:58px;z-index:100}
+.nav::-webkit-scrollbar{display:none}
+.nb{padding:12px 14px;border:none;background:none;font-size:13px;font-weight:600;color:#718096;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;font-family:inherit}
+.nb.on{color:#1B4F8A;border-bottom-color:#1B4F8A}
+.pg{display:none;padding:18px}.pg.on{display:block}
+.sec{font-size:16px;font-weight:700;margin:0 0 12px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.tr{background:#FFF5F5;color:#E53E3E}.to{background:#FFFAF0;color:#b7791f}
+.tg{background:#E6FAF3;color:#1a7a54}.tgr{background:#F7FAFC;color:#718096}
+.tb{background:#E8F0FB;color:#1B4F8A}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px}
+.kcard{background:white;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);border-left:4px solid transparent}
+.kcard.bl{border-left-color:#1B4F8A}.kcard.ro{border-left-color:#E53E3E}
+.kcard.or{border-left-color:#F6AD55}.kcard.ve{border-left-color:#2ECC8F}
+.klbl{font-size:11px;color:#718096;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.kval{font-size:28px;font-weight:700;color:#1B4F8A;line-height:1}
+.ksub{font-size:12px;color:#718096;margin-top:4px}
+.fzone{background:white;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.fg{display:flex;flex-direction:column;gap:5px;flex:1;min-width:140px}
+.fg label{font-size:11px;color:#718096}
+.fg select{padding:10px 12px;border:2px solid #E2E8F0;border-radius:10px;font-size:13px}
+.breset{background:#F0F4F8;color:#1B4F8A;border:2px solid #1B4F8A;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;align-self:flex-end;font-family:inherit}
+.gzone{background:white;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px}
+.bline{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.blbl{font-size:12px;color:#1A202C;min-width:100px;font-weight:600}
+.bfond{flex:1;height:22px;background:#F0F4F8;border-radius:6px;overflow:hidden}
+.bfill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:11px;color:white;font-weight:700;transition:width .5s}
+.bcnt{font-size:12px;color:#718096;min-width:28px;text-align:right}
+.tzone{background:white;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#F0F4F8;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#718096;text-transform:uppercase}
+td{padding:12px 14px;border-bottom:1px solid #F0F4F8;vertical-align:middle}
+tr:hover td{background:#F7FAFC}
+tr:last-child td{border-bottom:none}
+.eqlayout{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start}
+@media(max-width:768px){.eqlayout{grid-template-columns:1fr}}
+.eqliste{background:white;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden}
+.eqlhdr{background:#1B4F8A;color:white;padding:14px 16px;font-size:14px;font-weight:700}
+.eqi{padding:14px 16px;border-bottom:1px solid #F0F4F8;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.eqi:hover{background:#F7FAFC}.eqi.sel{background:#E8F0FB;border-left:4px solid #1B4F8A}
+.eqi:last-child{border-bottom:none}
+.bsup{background:none;border:none;color:#E53E3E;font-size:16px;cursor:pointer;padding:4px 8px;border-radius:6px;opacity:.5;flex-shrink:0}
+.bsup:hover{opacity:1;background:#FFF5F5}
+#fiche{background:white;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden}
+.fhdr{background:linear-gradient(135deg,#1B4F8A,#2196C4);color:white;padding:20px}
+.ftit{font-size:20px;font-weight:700;margin-bottom:4px}
+.fsn{font-size:13px;opacity:.85}
+.fcorps{padding:20px}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.smini{text-align:center;background:#F0F4F8;border-radius:10px;padding:12px 6px}
+.smv{font-size:18px;font-weight:700;color:#1B4F8A}
+.sml{font-size:10px;color:#718096;margin-top:3px}
+.fsec{margin-bottom:20px}
+.fstit{font-size:13px;font-weight:700;color:#1B4F8A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #E8F0FB}
+.dbfond{height:12px;background:#F0F4F8;border-radius:6px;overflow:hidden;margin:8px 0}
+.dbfill{height:100%;border-radius:6px;transition:width .6s}
+.hl{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #F0F4F8;align-items:flex-start}
+.hl:last-child{border-bottom:none}
+.hdate{font-size:11px;color:#718096;min-width:70px;margin-top:2px}
+.hinfo{flex:1}.hpn{font-size:13px;font-weight:600;margin-bottom:3px}
+.hdet{font-size:11px;color:#718096}
+.hcout{font-size:12px;font-weight:700;color:#E53E3E;min-width:60px;text-align:right;margin-top:2px}
+.pl{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F0F4F8}
+.pl:last-child{border-bottom:none}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ri{background:#F0F4F8;border-radius:10px;padding:12px}
+.rl{font-size:11px;color:#718096;margin-bottom:4px}
+.rv{font-size:16px;font-weight:700;color:#1A202C}
+.verd{margin-top:12px;padding:12px 16px;border-radius:10px;font-size:14px;font-weight:700;text-align:center}
+.verd.ben{background:#E6FAF3;color:#1a7a54}.verd.def{background:#FFF5F5;color:#E53E3E}
+.sbox{border:1.5px dashed;border-radius:10px;padding:14px;margin-bottom:12px}
+.sbox.or{border-color:#F6AD55;background:#FFF8E6}.sbox.bl{border-color:#2196C4;background:#F0F8FF}
+.stit{font-size:12px;font-weight:700;margin-bottom:10px}
+.stit.or{color:#b7791f}.stit.bl{color:#1B4F8A}
+.sinp{width:100%;padding:10px;border:2px solid #E2E8F0;border-radius:8px;font-size:14px;font-family:inherit;outline:none}
+.sinp:focus{border-color:#1B4F8A}
+.sbtn{width:100%;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:white;margin-top:10px}
+.sbtn.or{background:#1B4F8A}.sbtn.bl{background:#2196C4}
+.icarte{background:white;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid transparent;cursor:pointer}
+.icarte.cr{border-left-color:#E53E3E}.icarte.ha{border-left-color:#F6AD55}.icarte.no{border-left-color:#718096}
+.chatbox{background:white;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden;display:flex;flex-direction:column;height:calc(100vh - 180px);min-height:500px}
+.chdr{background:#1B4F8A;padding:14px 18px;color:white;display:flex;align-items:center;gap:12px}
+.crap{display:flex;gap:8px;padding:10px 14px;overflow-x:auto;background:#F7FAFC;border-bottom:1px solid #E2E8F0}
+.crap::-webkit-scrollbar{display:none}
+.brap{background:white;border:1.5px solid #E2E8F0;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;color:#1B4F8A;cursor:pointer;white-space:nowrap;font-family:inherit}
+.brap:hover{background:#E8F0FB;border-color:#1B4F8A}
+#ia-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.muser{background:#1B4F8A;color:white;align-self:flex-end;border-radius:18px 18px 4px 18px;padding:11px 15px;max-width:80%;font-size:14px;line-height:1.5}
+.mbot{background:white;color:#1A202C;align-self:flex-start;border-radius:18px 18px 18px 4px;padding:11px 15px;max-width:85%;font-size:14px;line-height:1.5;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.cinp{padding:12px 14px;border-top:1px solid #E2E8F0;display:flex;gap:8px;background:white}
+.cinp input{flex:1;padding:11px 14px;border:2px solid #E2E8F0;border-radius:22px;font-size:14px;outline:none;font-family:inherit}
+.cinp input:focus{border-color:#1B4F8A}
+.bsend{width:44px;height:44px;background:#1B4F8A;color:white;border:none;border-radius:50%;font-size:18px;cursor:pointer;flex-shrink:0}
+/* PLANNING */
+.plan-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start}
+@media(max-width:900px){.plan-layout{grid-template-columns:1fr}}
+.cal-panel{background:white;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden}
+.cal-hdr{background:#F7FAFC;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #E2E8F0}
+.cal-titre{font-size:16px;font-weight:700}
+.cal-nav-btn{background:#1B4F8A;color:white;border:none;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-jhdr{padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:#718096;text-transform:uppercase;border-bottom:1px solid #E2E8F0;background:#F7FAFC}
+.cal-cell{min-height:88px;padding:4px;border-right:1px solid #F0F4F8;border-bottom:1px solid #F0F4F8;cursor:pointer}
+.cal-cell:hover{background:#F7FAFC}
+.cal-cell:nth-child(7n){border-right:none}
+.cal-num{font-size:11px;color:#718096;margin-bottom:3px;font-weight:600}
+.cal-num.auj{background:#1B4F8A;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px}
+.cal-cell.gris .cal-num{color:#CBD5E0}
+.ev{font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev.cr{background:#FFF5F5;color:#E53E3E;border-left:3px solid #E53E3E}
+.ev.ha{background:#FFFAF0;color:#b7791f;border-left:3px solid #F6AD55}
+.ev.no{background:#E8F0FB;color:#1B4F8A;border-left:3px solid #1B4F8A}
+.ev.pr{background:#E6FAF3;color:#1a7a54;border-left:3px solid #2ECC8F}
+.cal-leg{display:flex;gap:14px;padding:10px 16px;background:#F7FAFC;border-top:1px solid #E2E8F0;flex-wrap:wrap}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:#718096}
+.leg-d{width:12px;height:12px;border-radius:3px}
+.tech-barre-fond{height:8px;background:#F0F4F8;border-radius:4px;overflow:hidden;margin-top:4px}
+.tech-barre-fill{height:100%;border-radius:4px;transition:width .5s}
+.fab{position:fixed;bottom:28px;right:28px;width:58px;height:58px;background:#1B4F8A;color:white;border:none;border-radius:50%;font-size:30px;cursor:pointer;box-shadow:0 4px 18px rgba(27,79,138,.45);display:none;align-items:center;justify-content:center;z-index:300}
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center;padding:20px}
+.moverlay.on{display:flex}
+.mbox{background:white;border-radius:18px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mtit{font-size:18px;font-weight:700;margin-bottom:20px}
+.fg2{margin-bottom:14px}
+.fg2 label{font-size:12px;font-weight:700;color:#718096;text-transform:uppercase;margin-bottom:6px}
+.fg2 input,.fg2 select,.fg2 textarea{width:100%;padding:12px 14px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none}
+.fg2 input:focus,.fg2 select:focus{border-color:#1B4F8A}
+.fg2grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mbtns{display:flex;gap:10px;margin-top:20px}
+.bann{flex:1;padding:13px;border:2px solid #E2E8F0;border-radius:10px;background:white;color:#718096;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.bcon{flex:2;padding:13px;border:none;border-radius:10px;background:#1B4F8A;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.bsupcon{flex:2;padding:13px;border:none;border-radius:10px;background:#E53E3E;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.piece-card{background:white;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:10px;border-left:4px solid #E2E8F0;transition:border-color .2s}
+.piece-card.ok{border-left-color:#2ECC8F}
+.piece-card.low{border-left-color:#F6AD55}
+.piece-card.zero{border-left-color:#E53E3E}
+.stock-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:5px 12px;border-radius:20px}
+.stock-badge.ok{background:#E6FAF3;color:#1a7a54}
+.stock-badge.low{background:#FFFAF0;color:#b7791f}
+.stock-badge.zero{background:#FFF5F5;color:#E53E3E}
+.inp-piece{width:100%;padding:8px 10px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
+.inp-piece:focus{border-color:#1B4F8A}
+.stock-ctrl{display:flex;align-items:center;gap:8px}
+.stock-btn{width:32px;height:32px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.stock-btn.moins{background:#FFF5F5;color:#E53E3E}
+.stock-btn.plus{background:#E6FAF3;color:#1a7a54}
+.stock-num{font-size:18px;font-weight:700;color:#1A202C;min-width:40px;text-align:center}
+.optim-card{background:white;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:14px}
+.optim-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.modele-badge{display:inline-block;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;background:#E8F0FB;color:#1B4F8A}
+.score-cercle{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0}
+.reco-box{border-radius:10px;padding:12px 16px;font-size:13px;margin-top:10px;border-left:4px solid}
+.reco-box.rouge{background:#FFF5F5;border-color:#E53E3E;color:#E53E3E}
+.reco-box.orange{background:#FFFAF0;border-color:#F6AD55;color:#b7791f}
+.reco-box.vert{background:#E6FAF3;border-color:#2ECC8F;color:#1a7a54}
+.optim-inp{width:100%;padding:9px 12px;border:2px solid #E2E8F0;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
+.optim-inp:focus{border-color:#1B4F8A}
+.mttr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px}
+.mttr-item{background:#F0F4F8;border-radius:8px;padding:10px;text-align:center}
+.mttr-val{font-size:18px;font-weight:700;color:#1B4F8A}
+.mttr-lbl{font-size:10px;color:#718096;margin-top:2px;text-transform:uppercase}
+.toast{position:fixed;bottom:100px;right:28px;color:white;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);z-index:500;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+.toast.on{opacity:1;transform:translateY(0)}
+.rapport-carte{background:white;border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);border-left:5px solid #1B4F8A}
+.rapport-carte.critique{border-left-color:#E53E3E}
+.rapport-carte.haute{border-left-color:#F6AD55}
+.rapport-entete{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.rapport-num{font-size:11px;color:#718096;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.rapport-machine{font-size:18px;font-weight:700;color:#1A202C;margin:4px 0}
+.rapport-sn{font-size:12px;color:#718096}
+.rapport-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.rapport-champ{background:#F0F4F8;border-radius:8px;padding:10px}
+.rapport-lbl{font-size:10px;color:#718096;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.rapport-val{font-size:13px;font-weight:700;color:#1A202C}
+.rapport-desc{background:#FFF8E6;border-radius:8px;padding:12px;border-left:3px solid #F6AD55;font-size:13px;margin-bottom:14px}
+.rapport-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-impr{padding:9px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-impr.bleu{background:#1B4F8A;color:white}
+.btn-impr.vert{background:#2ECC8F;color:white}
+.btn-impr.gris{background:#F0F4F8;color:#718096;border:1px solid #E2E8F0}
+@media print{
+  .nav,.ahdr,.fab,.toast,.rapport-actions,.nb{display:none!important}
+  .pg{display:block!important;padding:0}
+  .rapport-carte{box-shadow:none;border:1px solid #E2E8F0;page-break-inside:avoid;margin-bottom:20px}
+  body{background:white}
+}
+</style>
+</head>
+<body>
+
+<!-- CONNEXION -->
+<div id="pg-login">
+  <div class="lhdr">
+    <div class="logo">🏥</div>
+    <div class="titre">BiomédMaint</div>
+    <div class="sous">Gestion maintenance — Equipements Philips</div>
+  </div>
+  <div class="lbody">
+    <div><label>Nom d'utilisateur</label><input type="text" id="em" placeholder="Ex: abir"></div>
+    <div><label>Mot de passe</label><input type="password" id="pw" placeholder="Mot de passe"></div>
+    <button class="btnp" onclick="login()">Se connecter</button>
+    <div id="msg-err"></div>
+  </div>
+  <div class="lftr">BiomédMaint v1.0 — PFE Genie Biomedical 2026</div>
+</div>
+
+<!-- APPLICATION -->
+<div id="pg-app">
+  <div class="ahdr">
+    <div><h1>🏥 BiomédMaint</h1><p id="bjr">Bonjour</p></div>
+    <button class="bdeco" onclick="logout()">Deconnexion</button>
+  </div>
+  <div class="nav">
+    <button class="nb on" onclick="goPage('dash',this)">📊 Tableau de bord</button>
+    <button class="nb"    onclick="goPage('equip',this)">🔬 Equipements</button>
+    <button class="nb"    onclick="goPage('interv',this)">🔧 Interventions</button>
+    <button class="nb"    onclick="goPage('planning',this)">📅 Planning</button>
+    <button class="nb"    onclick="goPage('ia',this)">🤖 Assistant IA</button>
+    <button class="nb"    onclick="goPage('optim',this)">📊 Optimisation</button>
+    <button class="nb"    onclick="goPage('pieces',this)">🔩 Pieces</button>
+    <button class="nb"    onclick="goPage('rapports',this)">📄 Rapports</button>
+    <button class="nb" id="nb-admin" style="display:none;color:#E53E3E" onclick="goPage('admin',this)">🔐 Administration</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="pg on" id="pg-dash">
+    <br><p class="sec">🔍 Filtrer</p>
+    <div class="fzone">
+      <div class="fg"><label>Ville</label>
+        <select id="fv" onchange="filtrer()">
+          <option value="">Toutes</option>
+          <option>Bouskoura</option><option>Casablanca</option><option>Fes</option>
+          <option>Marrakech</option><option>Oujda</option><option>Ouazzane</option>
+          <option>Rabat</option><option>Safi</option><option>Tanger</option>
+          <option>Temara</option><option>Bani Mellal</option>
+        </select>
+      </div>
+      <div class="fg"><label>Machine</label>
+        <select id="fm" onchange="filtrer()">
+          <option value="">Toutes</option>
+          <option>Affiniti 30</option><option>Affiniti 30C</option>
+          <option>Affiniti 50G</option><option>Affiniti 50W</option>
+          <option>Affiniti 70G</option><option>Affiniti CVx</option>
+          <option>5300P Rea</option><option>5300P Urgence</option>
+          <option>Compact 5500 CV</option><option>CV550</option>
+        </select>
+      </div>
+      <div class="fg"><label>Statut</label>
+        <select id="fs" onchange="filtrer()">
+          <option value="">Tous</option>
+          <option>EN COURS</option><option>EN ATTENTE</option><option>CLOTUREE</option><option>OK</option>
+        </select>
+      </div>
+      <input type="text" id="fc" oninput="filtrer()" placeholder="Rechercher client..." style="flex:1;min-width:140px;padding:10px 12px;border:2px solid #E2E8F0;border-radius:10px;font-size:13px;font-family:inherit;outline:none">
+      <button class="breset" onclick="resetF()">Reinit.</button>
+    </div>
+    <p class="sec">📊 Indicateurs</p>
+    <div class="kgrid">
+      <div class="kcard bl"><div class="klbl">Total</div><div class="kval" id="k-tot">0</div><div class="ksub">interventions</div></div>
+      <div class="kcard ro"><div class="klbl">Ville touchee</div><div class="kval" id="k-vil" style="font-size:16px">—</div><div class="ksub" id="k-vil2"></div></div>
+      <div class="kcard or"><div class="klbl">Machine fragile</div><div class="kval" id="k-mac" style="font-size:16px">—</div><div class="ksub" id="k-mac2"></div></div>
+      <div class="kcard ve"><div class="klbl">Pannes actives</div><div class="kval" id="k-mtt">—</div><div class="ksub">EN COURS + EN ATTENTE</div></div>
+    </div>
+    <p class="sec">📈 Equipements par ville</p>
+    <div class="gzone"><div id="graph"></div></div>
+    <p class="sec">📋 Base installée 2025 — 30 équipements</p>
+    <div class="tzone">
+      <div style="font-size:12px;color:#718096;margin-bottom:10px;background:#FFF8E6;padding:10px;border-radius:8px;border-left:3px solid #F6AD55">
+        ✏️ <strong>Les colonnes Panne, Priorite, Statut et MTTR sont a remplir.</strong> Cliquez sur une cellule pour saisir les informations, puis cliquez Sauvegarder.
+      </div>
+      <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Client</th><th>Ville</th><th>Machine</th><th>N Serie</th>
+            <th>Date install.</th>
+            <th style="background:#FFF8E6;color:#b7791f">Panne</th>
+            <th style="background:#FFF8E6;color:#b7791f">Priorite</th>
+            <th style="background:#FFF8E6;color:#b7791f">Statut</th>
+            <th style="background:#FFF8E6;color:#b7791f">MTTR (h)</th>
+            <th style="background:#FFF8E6;color:#b7791f">Action</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      </div>
+      <div id="no-data" style="display:none;text-align:center;padding:40px;color:#718096">Aucun resultat</div>
+    </div>
+  </div>
+
+  <!-- EQUIPEMENTS -->
+  <div class="pg" id="pg-equip">
+    <br><p class="sec">🔬 Parc CHU Tanger — Cliquez pour voir la fiche</p>
+    <div class="eqlayout">
+      <div class="eqliste">
+        <div class="eqlhdr" id="eqlhdr">Equipements CHUT</div>
+        <div id="eqliste"></div>
+      </div>
+      <div id="fiche">
+        <div id="fvide" style="display:flex;align-items:center;justify-content:center;height:300px;color:#718096;font-size:14px;text-align:center">Selectionnez un equipement</div>
+        <div id="fcontenu" style="display:none">
+          <div class="fhdr"><div class="ftit" id="f-tit">—</div><div class="fsn" id="f-sn">—</div></div>
+          <div class="fcorps">
+            <div class="sgrid">
+              <div class="smini"><div class="smv" id="f-d">—</div><div class="sml">Disponibilite</div></div>
+              <div class="smini"><div class="smv" id="f-p">—</div><div class="sml">Pannes</div></div>
+              <div class="smini"><div class="smv" id="f-c">—</div><div class="sml">Cout</div></div>
+              <div class="smini"><div class="smv" id="f-s">—</div><div class="sml">Software</div></div>
+            </div>
+            <div class="fsec">
+              <div class="fstit">Disponibilite</div>
+              <div class="sbox or" id="dispo-f">
+                <div class="stit or">A remplir par le responsable</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div><label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:4px">JOURS EN PANNE</label><input type="number" id="jp" placeholder="Ex: 18" min="0" max="365" class="sinp"></div>
+                  <div><label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:4px">JOURS TOTAL</label><input type="number" id="jt" value="365" class="sinp"></div>
+                </div>
+                <button class="sbtn or" onclick="calcDispo()">Calculer la disponibilite</button>
+              </div>
+              <div id="dispo-r" style="display:none">
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:#718096;margin-bottom:4px"><span>Disponibilite</span><span id="d-pct" style="font-weight:700;color:#1B4F8A">—</span></div>
+                <div class="dbfond"><div class="dbfill" id="d-bar" style="width:0%"></div></div>
+                <div style="font-size:11px;color:#718096;margin-top:6px" id="d-det"></div>
+                <button onclick="dispReset()" style="margin-top:8px;padding:6px 12px;background:none;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;color:#718096;cursor:pointer">Modifier</button>
+              </div>
+            </div>
+            <div class="fsec"><div class="fstit">Historique pannes</div><div id="f-hist"></div></div>
+            <div class="fsec"><div class="fstit">Pieces utilisees</div><div id="f-pieces"></div></div>
+            <div class="fsec"><div class="fstit">Mises a jour software</div><div id="f-sw"></div></div>
+            <div class="fsec">
+              <div class="fstit">Rentabilite contrat</div>
+              <div class="sbox bl" id="rent-f">
+                <div class="stit bl">A remplir par le responsable</div>
+                <div style="margin-bottom:10px"><label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:4px">CONTRAT ANNUEL (MAD)</label><input type="number" id="rct" placeholder="Ex: 85000" class="sinp"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div><label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:4px">COUT PIECES (MAD)</label><input type="number" id="rcp" placeholder="Ex: 15000" class="sinp"></div>
+                  <div><label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:4px">COUT MAIN OEUVRE (MAD)</label><input type="number" id="rmo" placeholder="Ex: 6000" class="sinp"></div>
+                </div>
+                <button class="sbtn bl" onclick="calcRent()">Calculer la rentabilite</button>
+              </div>
+              <div id="rent-r" style="display:none">
+                <div class="rgrid">
+                  <div class="ri"><div class="rl">Contrat</div><div class="rv" id="r-ct">—</div></div>
+                  <div class="ri"><div class="rl">Cout total</div><div class="rv" id="r-cr">—</div></div>
+                  <div class="ri"><div class="rl">Pieces</div><div class="rv" id="r-cp">—</div></div>
+                  <div class="ri"><div class="rl">Main oeuvre</div><div class="rv" id="r-mo">—</div></div>
+                  <div class="ri"><div class="rl">Marge</div><div class="rv" id="r-mg">—</div></div>
+                  <div class="ri"><div class="rl">ROI</div><div class="rv" id="r-roi">—</div></div>
+                </div>
+                <div class="verd" id="r-verd">—</div>
+                <button onclick="rentReset()" style="margin-top:8px;padding:6px 12px;background:none;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;color:#718096;cursor:pointer">Modifier</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERVENTIONS -->
+  <div class="pg" id="pg-interv">
+    <br><p class="sec">🔧 Interventions — CHU Tanger</p>
+    <div class="fzone">
+      <div class="fg"><label>Statut</label><select id="is" onchange="filtInt()"><option value="">Tous</option><option>EN COURS</option><option>EN ATTENTE</option><option>CLOTUREE</option></select></div>
+      <div class="fg"><label>Priorite</label><select id="ip" onchange="filtInt()"><option value="">Toutes</option><option>CRITIQUE</option><option>HAUTE</option><option>NORMALE</option></select></div>
+      <div class="fg"><label>Machine</label><select id="im" onchange="filtInt()"><option value="">Toutes</option><option>Affiniti 70G</option><option>Affiniti 70C</option><option>Affiniti 50G</option><option>CX50</option><option>Innosight</option></select></div>
+      <button class="breset" onclick="resetInt()">Reinit.</button>
+    </div>
+    <div class="kgrid">
+      <div class="kcard ro"><div class="klbl">En cours</div><div class="kval" id="i-co">0</div></div>
+      <div class="kcard or"><div class="klbl">En attente</div><div class="kval" id="i-at">0</div></div>
+      <div class="kcard ve"><div class="klbl">Cloturees</div><div class="kval" id="i-cl">0</div></div>
+      <div class="kcard bl"><div class="klbl">MTTR moyen</div><div class="kval" id="i-mt">—</div></div>
+    </div>
+    <div id="liste-int"></div>
+  </div>
+
+  <!-- PLANNING -->
+  <div class="pg" id="pg-planning">
+    <br><p class="sec">📅 Planning des interventions</p>
+    <div class="kgrid" style="margin-bottom:16px">
+      <div class="kcard bl"><div class="klbl">Ce mois</div><div class="kval" id="pl-tot">0</div><div class="ksub">interventions</div></div>
+      <div class="kcard ro"><div class="klbl">Correctives</div><div class="kval" id="pl-enc">0</div></div>
+      <div class="kcard ve"><div class="klbl">Disponibles</div><div class="kval" id="pl-lib">4 / 4</div><div class="ksub">techniciens</div></div>
+    </div>
+    <div class="plan-layout">
+      <!-- FORMULAIRE -->
+      <div style="background:white;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+        <div style="background:#1B4F8A;color:white;border-radius:10px;padding:14px;margin-bottom:16px;text-align:center">
+          <div style="font-size:22px;margin-bottom:4px">📅</div>
+          <div style="font-size:15px;font-weight:700">Planifier une intervention</div>
+          <div style="font-size:11px;opacity:.8;margin-top:4px">Cliquez sur un jour du calendrier ou choisissez une date</div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">DATE DE INTERVENTION</label>
+          <input type="date" id="pl-date" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">EQUIPEMENT</label>
+          <select id="pl-equip" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:13px;font-family:inherit;outline:none">
+            <option value="">-- Choisir un equipement --</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">TECHNICIEN</label>
+          <select id="pl-tech" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div>
+            <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">DUREE (heures)</label>
+            <input type="number" id="pl-duree" placeholder="Ex: 3.5" min="0.5" step="0.5" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+          </div>
+          <div>
+            <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">TYPE</label>
+            <select id="pl-type" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+              <option value="CORRECTIVE">Corrective</option>
+              <option value="PREVENTIVE">Preventive</option>
+              <option value="VERIFICATION">Verification</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">PRIORITE</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <label style="display:flex;align-items:center;gap:5px;padding:10px;border:2px solid #E2E8F0;border-radius:10px;cursor:pointer;font-size:13px"><input type="radio" name="pl-prio" value="NORMALE" checked> Normale</label>
+            <label style="display:flex;align-items:center;gap:5px;padding:10px;border:2px solid #F6AD55;border-radius:10px;cursor:pointer;font-size:13px"><input type="radio" name="pl-prio" value="HAUTE"> Haute</label>
+            <label style="display:flex;align-items:center;gap:5px;padding:10px;border:2px solid #E53E3E;border-radius:10px;cursor:pointer;font-size:13px"><input type="radio" name="pl-prio" value="CRITIQUE"> Critique</label>
+          </div>
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">DESCRIPTION</label>
+          <textarea id="pl-desc" rows="3" placeholder="Ex: Changement sonde L12-5, verification trimestrielle..." style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:none"></textarea>
+        </div>
+        <button onclick="ajouterEv()" style="width:100%;padding:13px;background:#1B4F8A;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Ajouter au planning</button>
+        <!-- Charge techniciens -->
+        <div style="margin-top:16px;border-top:1px solid #E2E8F0;padding-top:14px">
+          <div style="font-size:13px;font-weight:700;color:#1A202C;margin-bottom:10px">Charge de travail ce mois</div>
+          <div id="tech-list"></div>
+        </div>
+      </div>
+      <!-- CALENDRIER -->
+      <div class="cal-panel">
+        <div class="cal-hdr">
+          <div class="cal-titre" id="cal-titre">Chargement...</div>
+          <div style="display:flex;gap:8px">
+            <button class="cal-nav-btn" onclick="changerMois(-1)">&#9664;</button>
+            <button class="cal-nav-btn" onclick="changerMois(0)">Auj.</button>
+            <button class="cal-nav-btn" onclick="changerMois(1)">&#9654;</button>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-jhdr">Lun</div><div class="cal-jhdr">Mar</div><div class="cal-jhdr">Mer</div>
+          <div class="cal-jhdr">Jeu</div><div class="cal-jhdr">Ven</div><div class="cal-jhdr">Sam</div><div class="cal-jhdr">Dim</div>
+        </div>
+        <div id="cal-hint" style="text-align:center;padding:30px 20px;color:#718096;background:#F7FAFC;border-bottom:1px solid #E2E8F0">
+          <div style="font-size:32px;margin-bottom:8px">📅</div>
+          <div style="font-size:14px;font-weight:700;color:#1A202C;margin-bottom:4px">Planning vide</div>
+          <div style="font-size:12px">Cliquez sur un jour ou remplissez le formulaire</div>
+        </div>
+        <div class="cal-grid" id="cal-corps"></div>
+        <div class="cal-leg">
+          <div class="leg-i"><div class="leg-d" style="background:#E53E3E"></div>Corrective Critique</div>
+          <div class="leg-i"><div class="leg-d" style="background:#F6AD55"></div>Corrective Haute</div>
+          <div class="leg-i"><div class="leg-d" style="background:#1B4F8A"></div>Normale</div>
+          <div class="leg-i"><div class="leg-d" style="background:#2ECC8F"></div>Preventive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIMISATION TECHNICO-ECONOMIQUE -->
+  <div class="pg" id="pg-optim">
+    <br>
+    <p class="sec">📊 Optimisation technico-économique — Parc CHUT Tanger</p>
+
+    <!-- Note explicative -->
+    <div style="background:#E8F0FB;border-radius:10px;padding:14px;margin-bottom:18px;font-size:13px;color:#1B4F8A;border-left:4px solid #1B4F8A">
+      <strong>Comment utiliser cette interface :</strong> Les indicateurs techniques (pannes, taux de panne) sont calculés automatiquement depuis le Parc CHUT. Remplissez les données économiques pour chaque modalité et cliquez <strong>Calculer</strong> pour obtenir le score d'optimisation.
+    </div>
+
+    <!-- KPIs globaux -->
+    <div class="kgrid" style="margin-bottom:18px">
+      <div class="kcard bl"><div class="klbl">Total modalites</div><div class="kval">5</div><div class="ksub">types equipements</div></div>
+      <div class="kcard bl"><div class="klbl">Total parc CHUT</div><div class="kval">27</div><div class="ksub">equipements</div></div>
+      <div class="kcard ro"><div class="klbl">Pannes identifiees</div><div class="kval" id="opt-pannes-tot">10</div><div class="ksub">sur 27 equip.</div></div>
+      <div class="kcard ve"><div class="klbl">Taux disponibilite</div><div class="kval" id="opt-dispo-glob">—</div><div class="ksub">moyen parc</div></div>
+    </div>
+
+    <!-- Graphique pannes par modalite -->
+    <div class="optim-card" style="margin-bottom:18px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px">📈 Analyse technique — Pannes par modalite (Parc CHUT)</div>
+      <div id="graph-pannes"></div>
+      <div style="font-size:11px;color:#718096;margin-top:10px">Donnees issues de la colonne MC du fichier Parc CHUT — Excel DATA_BASE.xlsx</div>
+    </div>
+
+    <!-- Cartes par modalite -->
+    <div style="font-size:15px;font-weight:700;margin-bottom:14px">🔬 Analyse par modalite — Saisie des donnees economiques</div>
+    <div id="liste-modalites"></div>
+
+    <!-- Tableau de synthese -->
+    <div class="optim-card" style="margin-top:4px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px">📋 Tableau de synthese — Scores optimisation</div>
+      <div style="overflow-x:auto">
+        <table id="tableau-synthese">
+          <thead>
+            <tr>
+              <th>Modalite</th>
+              <th>Nb equip.</th>
+              <th>Nb pannes</th>
+              <th>Taux panne</th>
+              <th>Contrat (MAD)</th>
+              <th>Cout maint.</th>
+              <th>Marge</th>
+              <th>ROI</th>
+              <th>Score optim.</th>
+            </tr>
+          </thead>
+          <tbody id="synthese-body">
+            <tr><td colspan="9" style="text-align:center;color:#718096;padding:20px">Remplissez les donnees economiques et cliquez Calculer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recommandations -->
+    <div class="optim-card" style="margin-top:14px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px">💡 Recommandations d'optimisation</div>
+      <div id="recommandations">
+        <div style="text-align:center;color:#718096;padding:20px;font-size:13px">Calculez les scores pour obtenir les recommandations automatiques</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIECES DE RECHANGE -->
+  <div class="pg" id="pg-pieces">
+    <br>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <p class="sec" style="margin:0">🔩 Suivi des pieces de rechange</p>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="search-piece" oninput="filtrerPieces()" placeholder="Rechercher une piece..." style="padding:9px 14px;border:2px solid #E2E8F0;border-radius:10px;font-size:13px;font-family:inherit;outline:none;width:220px">
+        <button onclick="ouvrirAjoutPiece()" style="padding:9px 16px;background:#1B4F8A;color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">+ Ajouter piece</button>
+      </div>
+    </div>
+
+    <!-- KPIs stock -->
+    <div class="kgrid" style="margin-bottom:16px">
+      <div class="kcard bl"><div class="klbl">Total pieces</div><div class="kval" id="pc-tot">0</div><div class="ksub">references</div></div>
+      <div class="kcard ve"><div class="klbl">En stock</div><div class="kval" id="pc-ok">0</div><div class="ksub">disponibles</div></div>
+      <div class="kcard or"><div class="klbl">Stock faible</div><div class="kval" id="pc-low">0</div><div class="ksub">a commander</div></div>
+      <div class="kcard ro"><div class="klbl">Rupture</div><div class="kval" id="pc-zero">0</div><div class="ksub">stock = 0</div></div>
+    </div>
+
+    <!-- Alerte stock faible -->
+    <div id="alerte-stock" style="display:none;background:#FFF8E6;border:1.5px solid #F6AD55;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#b7791f">
+      <strong>⚠️ Attention :</strong> Certaines pieces ont un stock faible ou en rupture. Pensez a passer commande.
+    </div>
+
+    <!-- Liste des pieces -->
+    <div id="liste-pieces"></div>
+  </div>
+
+  <!-- MODAL AJOUTER PIECE -->
+  <div class="moverlay" id="m-pc">
+    <div class="mbox">
+      <div class="mtit" id="m-pc-tit">Ajouter une piece</div>
+      <input type="hidden" id="pc-edit-id">
+      <div class="fg2grid">
+        <div class="fg2"><label>Part Number</label><input type="text" id="pc-ref" placeholder="Ex: 453561509221"></div>
+        <div class="fg2"><label>Designation</label><input type="text" id="pc-nom" placeholder="Ex: EBOX"></div>
+      </div>
+      <div class="fg2"><label>Machine compatible</label>
+        <select id="pc-machine" style="width:100%;padding:12px 14px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+          <option value="">Toutes machines</option>
+          <option>Affiniti 70G</option><option>Affiniti 70C</option><option>Affiniti 50G</option>
+          <option>Affiniti 30</option><option>Affiniti CVx</option><option>CX50</option>
+          <option>Innosight</option><option>Compact 5500</option><option>CV550</option>
+        </select>
+      </div>
+      <div class="fg2grid">
+        <div class="fg2"><label>Prix unitaire (MAD)</label><input type="number" id="pc-prix" placeholder="Ex: 15000" min="0"></div>
+        <div class="fg2"><label>Stock initial</label><input type="number" id="pc-stock" placeholder="Ex: 2" min="0"></div>
+      </div>
+      <div class="fg2grid">
+        <div class="fg2"><label>Stock minimum (alerte)</label><input type="number" id="pc-min" placeholder="Ex: 1" min="0"></div>
+        <div class="fg2"><label>Fournisseur</label><input type="text" id="pc-fourn" placeholder="Ex: Philips France"></div>
+      </div>
+      <div class="fg2"><label>Remarque</label><textarea id="pc-rem" rows="2" placeholder="Notes, delai livraison..." style="width:100%;padding:10px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none;resize:none"></textarea></div>
+      <div class="mbtns">
+        <button class="bann" onclick="closeModal('m-pc')">Annuler</button>
+        <button class="bcon" onclick="sauvegarderPiece()">Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL MOUVEMENT STOCK -->
+  <div class="moverlay" id="m-mouv">
+    <div class="mbox">
+      <div class="mtit" id="mouv-tit">Mouvement de stock</div>
+      <input type="hidden" id="mouv-id">
+      <div style="background:#F0F4F8;border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="font-size:15px;font-weight:700" id="mouv-nom">—</div>
+        <div style="font-size:12px;color:#718096;margin-top:4px" id="mouv-ref">—</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <button id="mouv-type-sortie" onclick="setMouvType('sortie')" style="padding:12px;border:2px solid #E53E3E;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:#FFF5F5;color:#E53E3E;font-family:inherit">Sortie (utilisation)</button>
+        <button id="mouv-type-entree" onclick="setMouvType('entree')" style="padding:12px;border:2px solid #2ECC8F;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:white;color:#718096;font-family:inherit">Entree (commande)</button>
+      </div>
+      <div class="fg2"><label>Quantite</label><input type="number" id="mouv-qte" placeholder="Ex: 1" min="1" value="1"></div>
+      <div class="fg2"><label>Motif</label><input type="text" id="mouv-motif" placeholder="Ex: Remplacement CX50 SG82000055"></div>
+      <div class="mbtns">
+        <button class="bann" onclick="closeModal('m-mouv')">Annuler</button>
+        <button class="bcon" id="mouv-btn-ok" onclick="confirmerMouvement()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RAPPORTS -->
+  <div class="pg" id="pg-rapports">
+    <br>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <p class="sec" style="margin:0">📄 Rapports d'interventions</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="rp-filtre-statut" onchange="filtrerRapports()" style="padding:9px 12px;border:2px solid #E2E8F0;border-radius:10px;font-size:13px;font-family:inherit;outline:none">
+          <option value="">Tous les rapports</option>
+          <option value="CLOTUREE">Cloturies</option>
+          <option value="EN COURS">En cours</option>
+          <option value="EN ATTENTE">En attente</option>
+        </select>
+        <button onclick="imprimerTous()" class="btn-impr bleu">🖨️ Imprimer tout</button>
+        <button onclick="exporterCSV()" class="btn-impr vert">📥 Exporter CSV</button>
+      </div>
+    </div>
+    <div class="kgrid">
+      <div class="kcard bl"><div class="klbl">Total rapports</div><div class="kval" id="rp-tot">0</div></div>
+      <div class="kcard ve"><div class="klbl">Cloturies</div><div class="kval" id="rp-clo">0</div></div>
+      <div class="kcard or"><div class="klbl">En cours</div><div class="kval" id="rp-enc">0</div></div>
+      <div class="kcard ro"><div class="klbl">MTTR moyen</div><div class="kval" id="rp-mtt">—</div></div>
+    </div>
+    <div id="liste-rapports">
+      <div style="text-align:center;padding:60px 20px;color:#718096">
+        <div style="font-size:48px;margin-bottom:12px">📄</div>
+        <div style="font-size:16px;font-weight:700;color:#1A202C;margin-bottom:6px">Aucun rapport</div>
+        <div style="font-size:13px">Les rapports sont generes automatiquement quand une intervention est cloturee</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IA -->
+  <div class="pg" id="pg-ia">
+    <br>
+    <div class="chatbox">
+      <div class="chdr">
+        <div style="font-size:28px">🤖</div>
+        <div><div style="font-size:15px;font-weight:700">Assistant diagnostic BiomédMaint</div><div style="font-size:11px;opacity:.75">27 equipements CHUT - Parc Philips reel</div></div>
+        <div style="margin-left:auto;width:10px;height:10px;background:#2ECC8F;border-radius:50%"></div>
+      </div>
+      <div class="crap">
+        <button class="brap" onclick="quickMsg('Code erreur E3 sonde defectueuse Affiniti')">E3 Sonde</button>
+        <button class="brap" onclick="quickMsg('Code erreur E5 disque dur SSD plein')">E5 SSD</button>
+        <button class="brap" onclick="quickMsg('Code erreur E6 EBOX defectueuse CX50')">E6 EBOX</button>
+        <button class="brap" onclick="quickMsg('Code erreur E8 batterie faible')">E8 Batterie</button>
+        <button class="brap" onclick="quickMsg('Code erreur E1 alimentation defectueuse')">E1 Alimentation</button>
+        <button class="brap" onclick="quickMsg('Code erreur E7 probleme reseau DICOM')">E7 Reseau</button>
+        <button class="brap" onclick="quickMsg('Code erreur E9 erreur logicielle')">E9 Logiciel</button>
+      </div>
+      <div id="ia-msgs"></div>
+      <div class="cinp">
+        <input type="text" id="ia-in" placeholder="Ecrivez un code erreur ou decrivez la panne...">
+        <button class="bsend" onclick="sendMsg()">&#9658;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE ADMINISTRATION -->
+<div class="pg" id="pg-admin">
+  <br>
+  <div style="background:#FFF5F5;border:2px solid #E53E3E;border-radius:14px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:36px">🔐</div>
+    <div>
+      <div style="font-size:16px;font-weight:700;color:#E53E3E">Zone Confidentielle — Responsable uniquement</div>
+      <div style="font-size:13px;color:#718096;margin-top:4px">Cette page est invisible pour les techniciens et ingenieurs. Seul le compte Responsable y a acces.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+
+    <!-- Liste des comptes -->
+    <div style="background:white;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden">
+      <div style="background:#E53E3E;color:white;padding:14px 16px;font-size:14px;font-weight:700">Comptes utilisateurs</div>
+      <div id="admin-liste-comptes"></div>
+    </div>
+
+    <!-- Formulaire ajouter compte -->
+    <div style="background:white;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+      <div style="font-size:15px;font-weight:700;margin-bottom:16px;color:#1A202C">Ajouter un compte</div>
+
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">NOM D'UTILISATEUR (identifiant)</label>
+        <input type="text" id="adm-user" placeholder="Ex: hassan" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">PRENOM AFFICHE</label>
+        <input type="text" id="adm-prenom" placeholder="Ex: Hassan" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">ROLE</label>
+        <select id="adm-role" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+          <option value="Technicien">Technicien</option>
+          <option value="Ingenieur">Ingenieur</option>
+          <option value="Ingenieure">Ingenieure</option>
+        </select>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:#718096;font-weight:700;margin-bottom:6px;display:block">MOT DE PASSE</label>
+        <input type="password" id="adm-pwd" placeholder="Mot de passe du nouveau compte" style="width:100%;padding:11px;border:2px solid #E2E8F0;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+      </div>
+      <button onclick="ajouterCompte()" style="width:100%;padding:13px;background:#1B4F8A;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+        Ajouter le compte
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMATION SUPPRESSION COMPTE -->
+<div class="moverlay" id="m-del-user">
+  <div class="mbox">
+    <div class="mtit">Supprimer ce compte ?</div>
+    <div style="background:#FFF5F5;border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:700;color:#E53E3E" id="del-user-nom">—</div>
+      <div style="font-size:12px;color:#718096;margin-top:4px" id="del-user-role">—</div>
+    </div>
+    <p style="font-size:13px;color:#E53E3E;font-weight:600;margin-bottom:16px">Ce compte ne pourra plus se connecter.</p>
+    <div class="mbtns">
+      <button class="bann" onclick="closeModal('m-del-user')">Annuler</button>
+      <button class="bsupcon" onclick="supprimerCompte()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<button class="fab" id="fab" onclick="openFab()">+</button>
+<div class="toast" id="toast"></div>
+
+<!-- MODAL AJOUTER EQUIPEMENT -->
+<div class="moverlay" id="m-aj">
+  <div class="mbox">
+    <div class="mtit">Ajouter un equipement</div>
+    <div class="fg2grid">
+      <div class="fg2"><label>Modele</label><select id="a-mod"><option>Affiniti 70G</option><option>Affiniti 70C</option><option>Affiniti 50G</option><option>Affiniti 30</option><option>Affiniti CVx</option><option>CX50</option><option>Innosight</option></select></div>
+      <div class="fg2"><label>N Serie</label><input type="text" id="a-sn" placeholder="Ex: US720F1500"></div>
+    </div>
+    <div class="fg2grid">
+      <div class="fg2"><label>Annee</label><input type="number" id="a-an" placeholder="Ex: 2023"></div>
+      <div class="fg2"><label>Statut</label><select id="a-st"><option value="OK">OK</option><option value="EN ATTENTE">En attente</option><option value="EN PANNE">En panne</option></select></div>
+    </div>
+    <div class="fg2grid">
+      <div class="fg2"><label>Disponibilite (%)</label><input type="number" id="a-di" placeholder="Ex: 99"></div>
+      <div class="fg2"><label>Contrat annuel (MAD)</label><input type="number" id="a-co" placeholder="Ex: 70000"></div>
+    </div>
+    <div class="fg2"><label>Panne (optionnel)</label><input type="text" id="a-pa" placeholder="Laisser vide si aucune"></div>
+    <div class="mbtns">
+      <button class="bann" onclick="closeModal('m-aj')">Annuler</button>
+      <button class="bcon" onclick="addEquip()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SUPPRESSION EQUIPEMENT -->
+<div class="moverlay" id="m-sup">
+  <div class="mbox">
+    <div class="mtit">Supprimer ?</div>
+    <div style="background:#FFF5F5;border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:700;color:#E53E3E" id="sup-n">—</div>
+      <div style="font-size:12px;color:#718096;margin-top:4px" id="sup-s">—</div>
+    </div>
+    <p style="font-size:13px;color:#E53E3E;font-weight:600;margin-bottom:16px">Action irreversible</p>
+    <div class="mbtns">
+      <button class="bann" onclick="closeModal('m-sup')">Annuler</button>
+      <button class="bsupcon" onclick="delEquip()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOUVELLE INTERVENTION -->
+<div class="moverlay" id="m-int">
+  <div class="mbox">
+    <div class="mtit">Nouvelle intervention</div>
+    <div class="fg2"><label>Equipement</label><select id="ni-eq"></select></div>
+    <div class="fg2grid">
+      <div class="fg2"><label>Type</label><select id="ni-ty"><option value="CORRECTIVE">Corrective</option><option value="PREVENTIVE">Preventive</option></select></div>
+      <div class="fg2"><label>Priorite</label><select id="ni-pr"><option value="NORMALE">Normale</option><option value="HAUTE">Haute</option><option value="CRITIQUE">Critique</option></select></div>
+    </div>
+    <div class="fg2"><label>Description</label><textarea id="ni-de" rows="3" placeholder="Decrivez le probleme..."></textarea></div>
+    <div class="fg2"><label>MTTR estime (heures)</label><input type="number" id="ni-mt" placeholder="Ex: 3.5" step="0.5"></div>
+    <div class="mbtns">
+      <button class="bann" onclick="closeModal('m-int')">Annuler</button>
+      <button class="bcon" onclick="addInt()">Creer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL INTERVENTION -->
+<div class="moverlay" id="m-det">
+  <div class="mbox">
+    <div class="mtit" id="det-t">—</div>
+    <div style="background:#F0F4F8;border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div style="font-size:11px;color:#718096;font-weight:700">MACHINE</div><div style="font-size:14px;font-weight:700" id="det-m">—</div></div>
+        <div><div style="font-size:11px;color:#718096;font-weight:700">SN</div><div style="font-size:14px;font-weight:700" id="det-s">—</div></div>
+        <div><div style="font-size:11px;color:#718096;font-weight:700">DATE</div><div id="det-d">—</div></div>
+        <div><div style="font-size:11px;color:#718096;font-weight:700">MTTR</div><div id="det-mt">—</div></div>
+      </div>
+    </div>
+    <div style="background:#FFF8E6;padding:12px;border-radius:8px;border-left:4px solid #F6AD55;font-size:14px;margin-bottom:14px" id="det-p">—</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px" id="det-tags"></div>
+    <div id="det-act"></div>
+    <div class="mbtns" style="margin-top:12px">
+      <button class="bann" onclick="closeModal('m-det')">Fermer</button>
+      <button class="bcon" style="background:#2ECC8F" onclick="goIA()">Consulter IA</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL EVENEMENT PLANNING -->
+<div class="moverlay" id="m-ev">
+  <div class="mbox">
+    <div class="mtit" id="ev-tit">—</div>
+    <div style="background:#F0F4F8;border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div style="font-size:11px;color:#718096;font-weight:700">TECHNICIEN</div><div style="font-size:14px;font-weight:700" id="ev-tech">—</div></div>
+        <div><div style="font-size:11px;color:#718096;font-weight:700">DATE</div><div style="font-size:14px;font-weight:700" id="ev-date">—</div></div>
+        <div><div style="font-size:11px;color:#718096;font-weight:700">DUREE</div><div id="ev-duree">—</div></div>
+        <div><div style="font-size:11px;color:#718096;font-weight:700">TYPE</div><div id="ev-type">—</div></div>
+      </div>
+    </div>
+    <div style="background:#FFF8E6;padding:12px;border-radius:8px;border-left:4px solid #F6AD55;font-size:14px;margin-bottom:14px" id="ev-desc">—</div>
+    <div id="ev-tags" style="display:flex;gap:8px;margin-bottom:14px"></div>
+    <div class="mbtns">
+      <button class="bann" onclick="closeModal('m-ev')">Fermer</button>
+      <button class="bsupcon" onclick="suppEv()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====================== DONNÉES ======================
+
+var USERS = {
+  admin: { prenom: 'Responsable', role: 'Responsable', pwd: 'admin2026', isAdmin: true  },
+  abir:  { prenom: 'Abir',        role: 'Ingenieure',  pwd: 'tech2024',  isAdmin: false },
+};
+
+var INTERVENTIONS = [
+  { id:1,  machine:'Affiniti 50G',    sn:'US824D0604',  client:'Promamec',           ville:'Bouskoura',   dateInstall:'01/01/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:2,  machine:'Compact 5500 CV', sn:'US824P0829',  client:'HCK',                ville:'Casablanca',  dateInstall:'03/02/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:3,  machine:'Affiniti 50G',    sn:'US923D0492',  client:'Clinique Dar DMANA', ville:'Ouazzane',    dateInstall:'03/02/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:4,  machine:'Affiniti 30',     sn:'US824E0616',  client:'Dr Loubaris',        ville:'Rabat',       dateInstall:'11/03/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:5,  machine:'Affiniti 30',     sn:'US824E0617',  client:'Dr Agharabi Badria', ville:'Temara',      dateInstall:'18/03/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:6,  machine:'CV550',           sn:'SZ92491603',  client:'HCZ',                ville:'Rabat',       dateInstall:'02/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:7,  machine:'Affiniti CVx',    sn:'US024R1052',  client:'Clinique Tarik Ibn Ziyad', ville:'Temara', dateInstall:'21/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:8,  machine:'Affiniti 50G',    sn:'US024D2851',  client:'Clinique Tarik Ibn Ziyad', ville:'Temara', dateInstall:'21/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:9,  machine:'5300P Rea',       sn:'US024P0735',  client:'Clinique Tarik Ibn Ziyad', ville:'Temara', dateInstall:'22/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:10, machine:'5300P Urgence',   sn:'US024P0736',  client:'Clinique Tarik Ibn Ziyad', ville:'Temara', dateInstall:'22/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:11, machine:'Affiniti 50W',    sn:'US024D2525',  client:'Clinique Tarik Ibn Ziyad', ville:'Temara', dateInstall:'25/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:12, machine:'Affiniti 70G',    sn:'US024F1062',  client:'Clinique Tarik Ibn Ziyad', ville:'Temara', dateInstall:'25/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:13, machine:'Affiniti 30C',    sn:'US225E1706',  client:'Dr SALMI Najlae',    ville:'Temara',      dateInstall:'30/04/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:14, machine:'Affiniti CVx',    sn:'USN24R1885',  client:'CHU Mohamed VI',     ville:'Oujda',       dateInstall:'02/05/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:15, machine:'Affiniti 30C',    sn:'US824E0615',  client:'Dr EZ-ZAHRAOUI Rhita', ville:'Casablanca', dateInstall:'20/05/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:16, machine:'CV550',           sn:'SZ12291163',  client:'ODM Fes',            ville:'Fes',         dateInstall:'12/06/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:17, machine:'Affiniti 50G',    sn:'US923D0493',  client:'ODM Fes',            ville:'Fes',         dateInstall:'12/06/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:18, machine:'Affiniti CVx',    sn:'US824R0445',  client:'Dr Lamhani Meryem',  ville:'Marrakech',   dateInstall:'14/06/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:19, machine:'Affiniti 30C',    sn:'US225E1708',  client:'Dr ESSAKET Imane',   ville:'Bani Mellal', dateInstall:'24/06/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:20, machine:'Affiniti CVx',    sn:'US225R1692',  client:'HCZ',                ville:'Rabat',       dateInstall:'26/06/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:21, machine:'Affiniti CVx',    sn:'US225R1693',  client:'HCK',                ville:'Casablanca',  dateInstall:'11/07/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:22, machine:'Affiniti CVx',    sn:'US425R0183',  client:'Dr SAFI Jihane',     ville:'Safi',        dateInstall:'04/09/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:23, machine:'Affiniti 30C',    sn:'US525E1067',  client:'Dr Louah L Timade',  ville:'Rabat',       dateInstall:'15/09/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:24, machine:'Affiniti 30C',    sn:'US525E1068',  client:'Daoud Layla',        ville:'Rabat',       dateInstall:'15/09/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:25, machine:'Affiniti CVx',    sn:'US525R1055',  client:'Dr Boudhar Zainab',  ville:'Safi',        dateInstall:'24/09/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:26, machine:'Affiniti 30C',    sn:'US225E1710',  client:'Hopital Ghassani',   ville:'Fes',         dateInstall:'25/09/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:27, machine:'Affiniti 30C',    sn:'US525E1069',  client:'Dr HADI Abdelali',   ville:'Safi',        dateInstall:'07/10/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:28, machine:'Affiniti CVx',    sn:'US425R0184',  client:'Clinique Slaoui',    ville:'Rabat',       dateInstall:'07/11/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:29, machine:'Affiniti 50G',    sn:'US525D0397',  client:'Clinique Slaoui',    ville:'Rabat',       dateInstall:'07/11/2025', panne:'', priorite:'', statut:'', mttr:'' },
+  { id:30, machine:'Affiniti 50G',    sn:'US822D0002',  client:'Clinique Ibn Sina',  ville:'Tanger',      dateInstall:'15/11/2025', panne:'', priorite:'', statut:'', mttr:'' },
+];
+
+var INTERVENTIONS_CHUT = [
+  { id:1,  machine:'Affiniti 70G', sn:'US720F1439', client:'CHU Tanger', panne:'Echo Nav - Sonde C5-1 + Prevoir L12-3', priorite:'CRITIQUE', statut:'EN COURS',   mttr:3.5, date:'18/03/2026', tech:'Abir Farahat'      },
+  { id:2,  machine:'Affiniti 70C', sn:'US720F1435', client:'CHU Tanger', panne:'Disque Dur plein - Manque Onduleur',    priorite:'HAUTE',    statut:'EN ATTENTE', mttr:2.0, date:'19/03/2026', tech:'Karim Benali'      },
+  { id:3,  machine:'CX50',         sn:'SG82000055', client:'CHU Tanger', panne:'Power reg + EBOX + SSD + Batterie',     priorite:'HAUTE',    statut:'CLOTUREE',   mttr:5.0, date:'15/03/2026', tech:'Abir Farahat'      },
+  { id:4,  machine:'CX50',         sn:'SG82000054', client:'CHU Tanger', panne:'Reinstallation SW + Prevoir Batt+SSD',  priorite:'NORMALE',  statut:'EN ATTENTE', mttr:1.5, date:'20/03/2026', tech:'Abir Farahat'      },
+  { id:5,  machine:'CX50',         sn:'SG82000059', client:'CHU Tanger', panne:'Bloc alimentation + Batterie',          priorite:'HAUTE',    statut:'EN ATTENTE', mttr:3.0, date:'22/03/2026', tech:'Karim Benali'      },
+  { id:6,  machine:'Affiniti 50G', sn:'US720D1272', client:'CHU Tanger', panne:'Changement sonde L12-5',                priorite:'NORMALE',  statut:'CLOTUREE',   mttr:2.5, date:'10/03/2026', tech:'Abir Farahat'      },
+  { id:7,  machine:'CX50',         sn:'SG82000049', client:'CHU Tanger', panne:'Changement batterie Li-ion',            priorite:'NORMALE',  statut:'CLOTUREE',   mttr:1.0, date:'08/03/2026', tech:'Karim Benali'      },
+  { id:8,  machine:'Affiniti 70C', sn:'US720F1436', client:'CHU Tanger', panne:'Changement Gas spring',                 priorite:'NORMALE',  statut:'CLOTUREE',   mttr:1.5, date:'05/03/2026', tech:'Abir Farahat'      },
+  { id:9,  machine:'Affiniti 50G', sn:'US720D1270', client:'CHU Tanger', panne:'Probleme reseau - resolu',              priorite:'NORMALE',  statut:'CLOTUREE',   mttr:1.5, date:'01/03/2026', tech:'Karim Benali'      },
+  { id:10, machine:'CX50',         sn:'SG82000056', client:'CHU Tanger', panne:'Changement batterie Li-ion',            priorite:'NORMALE',  statut:'CLOTUREE',   mttr:1.0, date:'25/02/2026', tech:'Abir Farahat'      }
+];
+
+var EQUIPEMENTS_CHUT = [
+  { id:1,  modele:'Affiniti 50G', sn:'US720D1272', annee:2020, statut:'OK',         disponibilite:87, jours_panne:47, jours_total:365, contrat_annuel:72000, historique:[{ date:'2025-2026', panne:'Changement sonde L12-5',          pieces:'Transducteur L12-5', mttr:2.5, cout:9000  }], pieces:[{ nom:'Transducteur L12-5', qte:1, cout:7000 },{ nom:'Main oeuvre', qte:1, cout:2000 }], software:[] },
+  { id:2,  modele:'Affiniti 70G', sn:'US720F1439', annee:2020, statut:'EN ATTENTE', disponibilite:87, jours_panne:47, jours_total:365, contrat_annuel:85000, historique:[{ date:'2025-2026', panne:'Echo Nav Sonde C5-1 + Prevoir L12-3', pieces:'Transducteur C5-1', mttr:3.5, cout:12000 }], pieces:[{ nom:'Transducteur C5-1', qte:1, cout:8000 },{ nom:'Filtre acoustique', qte:1, cout:1500 },{ nom:'Main oeuvre', qte:3, cout:6000 }], software:[] },
+  { id:3,  modele:'Affiniti 50G', sn:'US720D1270', annee:2020, statut:'OK',         disponibilite:97, jours_panne:11, jours_total:365, contrat_annuel:72000, historique:[{ date:'2025-2026', panne:'Probleme reseau resolu',            pieces:'Config reseau',      mttr:1.5, cout:2000  }], pieces:[{ nom:'Main oeuvre', qte:1, cout:2000 }], software:[] },
+  { id:4,  modele:'Affiniti 50G', sn:'US720D1269', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:72000, historique:[], pieces:[], software:[] },
+  { id:5,  modele:'Affiniti 50G', sn:'US720D1271', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:72000, historique:[], pieces:[], software:[] },
+  { id:6,  modele:'Affiniti 70C', sn:'US720F1435', annee:2020, statut:'EN ATTENTE', disponibilite:92, jours_panne:29, jours_total:365, contrat_annuel:78000, historique:[{ date:'2025-2026', panne:'Disque Dur plein Manque Onduleur',  pieces:'SSD 1To',            mttr:2.0, cout:5500  }], pieces:[{ nom:'SSD 1To', qte:1, cout:3500 },{ nom:'Main oeuvre', qte:1, cout:2000 }], software:[] },
+  { id:7,  modele:'CX50',         sn:'SG82000055', annee:2020, statut:'OK',         disponibilite:91, jours_panne:33, jours_total:365, contrat_annuel:65000, historique:[{ date:'2025-2026', panne:'EBOX + Power reg + SSD + Batterie', pieces:'EBOX + Power reg',   mttr:5.0, cout:32000 }], pieces:[{ nom:'EBOX', qte:1, cout:15000 },{ nom:'Power Regulator', qte:1, cout:6000 },{ nom:'SSD', qte:1, cout:2500 },{ nom:'Batterie', qte:1, cout:2200 },{ nom:'Main oeuvre', qte:2, cout:4000 }], software:[] },
+  { id:8,  modele:'Affiniti 70C', sn:'US720F1383', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:78000, historique:[], pieces:[], software:[] },
+  { id:9,  modele:'Innosight',    sn:'V0Y6K70044', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:55000, historique:[], pieces:[], software:[] },
+  { id:10, modele:'Affiniti 50G', sn:'US720D1273', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:72000, historique:[], pieces:[], software:[] },
+  { id:11, modele:'CX50',         sn:'SG82000051', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:65000, historique:[], pieces:[], software:[] },
+  { id:12, modele:'Innosight',    sn:'V0Y6K70047', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:55000, historique:[], pieces:[], software:[] },
+  { id:13, modele:'CX50',         sn:'SG82000054', annee:2020, statut:'EN ATTENTE', disponibilite:93, jours_panne:26, jours_total:365, contrat_annuel:65000, historique:[{ date:'2025-2026', panne:'Reinstallation SW Prevoir Batt SSD', pieces:'Batterie + SSD', mttr:1.5, cout:5000 }], pieces:[{ nom:'Batterie Li-ion', qte:1, cout:2200 },{ nom:'SSD', qte:1, cout:2500 }], software:[] },
+  { id:14, modele:'Affiniti 70C', sn:'US720F1384', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:78000, historique:[], pieces:[], software:[] },
+  { id:15, modele:'Affiniti 70C', sn:'US720F1436', annee:2020, statut:'OK',         disponibilite:98, jours_panne:7,  jours_total:365, contrat_annuel:78000, historique:[{ date:'2025-2026', panne:'Changement Gas spring',             pieces:'Gas spring',         mttr:1.5, cout:2800  }], pieces:[{ nom:'Gas spring', qte:1, cout:1200 },{ nom:'Main oeuvre', qte:1, cout:1200 }], software:[] },
+  { id:16, modele:'Affiniti 70C', sn:'US720F1382', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:78000, historique:[], pieces:[], software:[] },
+  { id:17, modele:'Affiniti 70C', sn:'US720F1437', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:78000, historique:[], pieces:[], software:[] },
+  { id:18, modele:'Affiniti 70C', sn:'US720F1438', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:78000, historique:[], pieces:[], software:[] },
+  { id:19, modele:'CX50',         sn:'SG82000059', annee:2020, statut:'EN ATTENTE', disponibilite:93, jours_panne:26, jours_total:365, contrat_annuel:65000, historique:[{ date:'2025-2026', panne:'Bloc alimentation + Batterie',       pieces:'Power Supply + Batt',mttr:3.0, cout:9500  }], pieces:[{ nom:'Power Supply VPPM', qte:1, cout:5500 },{ nom:'Batterie Li-ion', qte:1, cout:2200 },{ nom:'Main oeuvre', qte:1, cout:2000 }], software:[] },
+  { id:20, modele:'Affiniti 70C', sn:'US720F1381', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:78000, historique:[], pieces:[], software:[] },
+  { id:21, modele:'CX50',         sn:'SG82000049', annee:2020, statut:'OK',         disponibilite:93, jours_panne:26, jours_total:365, contrat_annuel:65000, historique:[{ date:'2025-2026', panne:'Changement batterie',                pieces:'Batterie Li-ion',    mttr:1.0, cout:2500  }], pieces:[{ nom:'Batterie Li-ion', qte:1, cout:2200 },{ nom:'Main oeuvre', qte:1, cout:800 }], software:[] },
+  { id:22, modele:'Affiniti 50G', sn:'US720D1268', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:72000, historique:[], pieces:[], software:[] },
+  { id:23, modele:'Innosight',    sn:'V0Y6K70046', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:55000, historique:[], pieces:[], software:[] },
+  { id:24, modele:'Affiniti 70C', sn:'US720F1434', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:78000, historique:[], pieces:[], software:[] },
+  { id:25, modele:'Innosight',    sn:'V0Y6K70045', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:55000, historique:[], pieces:[], software:[] },
+  { id:26, modele:'CX50',         sn:'SG82000070', annee:2020, statut:'OK',         disponibilite:99, jours_panne:4,  jours_total:365, contrat_annuel:65000, historique:[], pieces:[], software:[] },
+  { id:27, modele:'CX50',         sn:'SG82000056', annee:2020, statut:'OK',         disponibilite:93, jours_panne:26, jours_total:365, contrat_annuel:65000, historique:[{ date:'2025-2026', panne:'Changement batterie',                pieces:'Batterie Li-ion',    mttr:1.0, cout:2500  }], pieces:[{ nom:'Batterie Li-ion', qte:1, cout:2200 },{ nom:'Main oeuvre', qte:1, cout:800 }], software:[] }
+];
+
+var EVENEMENTS = [];
+var EV_ID_CTR = 1;
+var RAPPORTS = [];
+var RPT_CTR = 1;
+
+var PIECES = [
+  { id:1, ref:'', nom:'EBOX',                  machine:'CX50',          prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+  { id:2, ref:'', nom:'Acquisition Module',     machine:'Affiniti',      prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+  { id:3, ref:'', nom:'IMB2',                   machine:'Affiniti',      prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+  { id:4, ref:'', nom:'Power Supply VPPM',      machine:'CX50',          prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+  { id:5, ref:'', nom:'ACB',                    machine:'Affiniti',      prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+  { id:6, ref:'', nom:'Power Regulator board',  machine:'Affiniti / CX50',prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+  { id:7, ref:'', nom:'AIO',                    machine:'Affiniti',      prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+  { id:8, ref:'', nom:'User interface',         machine:'Affiniti / CX50',prix:0, stock:0, stockMin:1, fournisseur:'', remarque:'', historique:[] },
+];
+var PC_CTR = 9;
+var mouvType = 'sortie';
+var EQ_ID = null, SUP_ID = null, INT_ID = null, EV_SUP_ID = null, IA_OK = false;
+var CAL_MOIS = new Date().getMonth(), CAL_ANNEE = new Date().getFullYear();
+
+var TECH_COULEURS = ['#1B4F8A','#E53E3E','#2ECC8F','#F6AD55','#7B2D8B','#2196C4'];
+
+// Retourne la liste des techniciens depuis USERS (synchronise avec les comptes)
+function getTechs() {
+  return Object.values(USERS).filter(function(u) { return !u.isAdmin; });
+}
+
+// ====================== CONNEXION ======================
+
+function login() {
+  var u = document.getElementById('em').value.trim();
+  var p = document.getElementById('pw').value;
+  var user = USERS[u];
+  var err = document.getElementById('msg-err');
+  if (user && user.pwd === p) {
+    err.style.display = 'none';
+    document.getElementById('pg-login').style.display = 'none';
+    document.getElementById('pg-app').style.display = 'block';
+    document.getElementById('bjr').textContent = 'Bonjour ' + user.prenom + ' - ' + user.role;
+    // Afficher le bouton Admin seulement si Responsable
+    document.getElementById('nb-admin').style.display = user.isAdmin ? 'block' : 'none';
+    showDash(INTERVENTIONS);
+    loadEqList();
+    filtInt();
+  } else {
+    err.style.display = 'block';
+    err.textContent = 'Identifiants ou mot de passe incorrects.';
+  }
+}
+
+document.getElementById('pw').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') login();
+});
+
+function logout() {
+  document.getElementById('pg-app').style.display = 'none';
+  document.getElementById('pg-login').style.display = 'flex';
+  document.getElementById('em').value = '';
+  document.getElementById('pw').value = '';
+  document.getElementById('fab').style.display = 'none';
+  document.getElementById('nb-admin').style.display = 'none';
+}
+
+// ====================== NAVIGATION ======================
+
+function goPage(page, btn) {
+  document.querySelectorAll('.pg').forEach(function(p) { p.classList.remove('on'); });
+  document.querySelectorAll('.nb').forEach(function(b) { b.classList.remove('on'); });
+  document.getElementById('pg-' + page).classList.add('on');
+  btn.classList.add('on');
+  document.getElementById('fab').style.display = (page === 'equip' || page === 'interv') ? 'flex' : 'none';
+  if (page === 'interv') { fillEqSelect(); filtInt(); }
+  if (page === 'planning') { initPlanning(); }
+  if (page === 'admin') { chargerListeComptes(); }
+  if (page === 'ia' && !IA_OK) {
+    addBotMsg('Bonjour ! Je suis assistant diagnostic BiomédMaint. Je connais les 27 equipements CHUT. Ecrivez un code erreur (ex: E3, E6) ou decrivez la panne.');
+    IA_OK = true;
+  }
+}
+
+function openFab() {
+  var pg = document.querySelector('.pg.on');
+  if (pg && pg.id === 'pg-interv') { fillEqSelect(); openModal('m-int'); }
+  else if (pg && pg.id === 'pg-equip') { openModal('m-aj'); }
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('on'); }
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+
+document.querySelectorAll('.moverlay').forEach(function(m) {
+  m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('on'); });
+});
+
+// ====================== DASHBOARD ======================
+
+function filtrer() {
+  var v = document.getElementById('fv').value;
+  var m = document.getElementById('fm').value;
+  var s = document.getElementById('fs').value;
+  var q = document.getElementById('fc').value.toLowerCase();
+  showDash(INTERVENTIONS.filter(function(r) {
+    return (!v || r.ville === v)
+        && (!m || r.machine === m)
+        && (!s || r.statut === s)
+        && (!q || r.client.toLowerCase().includes(q));
+  }));
+}
+function resetF() {
+  document.getElementById('fv').value = '';
+  document.getElementById('fm').value = '';
+  document.getElementById('fs').value = '';
+  document.getElementById('fc').value = '';
+  showDash(INTERVENTIONS);
+}
+function showDash(data) {
+  document.getElementById('k-tot').textContent = data.length;
+  if (!data.length) {
+    ['k-vil','k-mac','k-mtt'].forEach(function(id){ document.getElementById(id).textContent='—'; });
+    document.getElementById('k-vil2').textContent=''; document.getElementById('k-mac2').textContent='';
+    document.getElementById('graph').innerHTML='<p style="color:#718096;text-align:center;padding:20px">Aucun equipement</p>';
+    document.getElementById('tbody').innerHTML=''; document.getElementById('no-data').style.display='block'; return;
+  }
+  var cv={}, cm={};
+  data.forEach(function(r){ cv[r.ville]=(cv[r.ville]||0)+1; cm[r.machine]=(cm[r.machine]||0)+1; });
+  var vx=Object.keys(cv).reduce(function(a,b){ return cv[a]>cv[b]?a:b; });
+  var mx=Object.keys(cm).reduce(function(a,b){ return cm[a]>cm[b]?a:b; });
+  document.getElementById('k-vil').textContent=vx; document.getElementById('k-vil2').textContent=cv[vx]+' equip.';
+  document.getElementById('k-mac').textContent=mx; document.getElementById('k-mac2').textContent=cm[mx]+' equip.';
+  var pannes=data.filter(function(r){ return r.statut==='EN COURS'||r.statut==='EN ATTENTE'; }).length;
+  document.getElementById('k-mtt').textContent=pannes||'—';
+  var cols=['#1B4F8A','#E53E3E','#F6AD55','#2ECC8F','#7B2D8B','#2196C4','#D97706'];
+  var maxV=Math.max.apply(null,Object.values(cv));
+  document.getElementById('graph').innerHTML=Object.keys(cv).sort(function(a,b){ return cv[b]-cv[a]; }).map(function(v,i){
+    var w=Math.round((cv[v]/maxV)*100);
+    return '<div class="bline"><div class="blbl">'+v+'</div><div class="bfond"><div class="bfill" style="width:'+w+'%;background:'+cols[i%cols.length]+'">'+(w>20?cv[v]+' equip.':'')+'</div></div><div class="bcnt">'+cv[v]+'</div></div>';
+  }).join('');
+  document.getElementById('no-data').style.display='none';
+
+  // Construire le tableau avec cellules editables (sans guillemets dans les attributs HTML)
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var r  = data[i];
+    var bg = r.statut==='EN COURS'?'#FFF5F5':r.statut==='EN ATTENTE'?'#FFFAF0':r.statut==='CLOTUREE'?'#E6FAF3':r.statut==='OK'?'#E8F0FB':'white';
+    var optP = '<option value="">--</option>'
+      + '<option value="NORMALE"'+(r.priorite==='NORMALE'?' selected':'')+'>Normale</option>'
+      + '<option value="HAUTE"'+(r.priorite==='HAUTE'?' selected':'')+'>Haute</option>'
+      + '<option value="CRITIQUE"'+(r.priorite==='CRITIQUE'?' selected':'')+'>Critique</option>';
+    var optS = '<option value="">--</option>'
+      + '<option value="OK"'+(r.statut==='OK'?' selected':'')+'>OK</option>'
+      + '<option value="EN ATTENTE"'+(r.statut==='EN ATTENTE'?' selected':'')+'>En attente</option>'
+      + '<option value="EN COURS"'+(r.statut==='EN COURS'?' selected':'')+'>En cours</option>'
+      + '<option value="CLOTUREE"'+(r.statut==='CLOTUREE'?' selected':'')+'>Cloturee</option>';
+    var inpStyle = 'padding:5px 8px;border:1.5px solid #E2E8F0;border-radius:6px;font-size:12px;font-family:inherit;outline:none';
+    var selStyle = 'padding:5px 8px;border:1.5px solid #E2E8F0;border-radius:6px;font-size:12px;font-family:inherit;background:white';
+    html += '<tr style="background:'+bg+'" id="tr-'+r.id+'">'
+      + '<td>'+r.client+'</td>'
+      + '<td style="color:#718096;font-size:12px">'+r.ville+'</td>'
+      + '<td><strong>'+r.machine+'</strong></td>'
+      + '<td style="color:#718096;font-size:11px;white-space:nowrap">'+r.sn+'</td>'
+      + '<td style="color:#718096;font-size:12px;white-space:nowrap">'+r.dateInstall+'</td>'
+      + '<td><input id="panne-'+r.id+'" type="text" value="'+r.panne+'" placeholder="Saisir la panne..." style="width:150px;'+inpStyle+'"></td>'
+      + '<td><select id="prio-'+r.id+'" style="'+selStyle+'">'+optP+'</select></td>'
+      + '<td><select id="stat-'+r.id+'" style="'+selStyle+'">'+optS+'</select></td>'
+      + '<td><input id="mttr-'+r.id+'" type="number" value="'+r.mttr+'" placeholder="h" style="width:55px;'+inpStyle+'" min="0" step="0.5"></td>'
+      + '<td><button id="sauv-'+r.id+'" style="background:#1B4F8A;color:white;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">Sauv.</button></td>'
+      + '</tr>';
+  }
+  document.getElementById('tbody').innerHTML = html;
+
+  // Attacher les events après rendu (évite les guillemets dans onclick)
+  for (var j = 0; j < data.length; j++) {
+    (function(rid) {
+      var bSauv = document.getElementById('sauv-' + rid);
+      if (bSauv) bSauv.addEventListener('click', function() { sauvegarderLigne(rid); });
+    })(data[j].id);
+  }
+}
+
+
+function sauvegarderLigne(id) {
+  var r = INTERVENTIONS.find(function(x){ return x.id===id; });
+  if (!r) return;
+  // Lire les valeurs depuis les inputs/selects
+  var inpP = document.getElementById('panne-'+id);
+  var selPr= document.getElementById('prio-'+id);
+  var selSt= document.getElementById('stat-'+id);
+  var inpM = document.getElementById('mttr-'+id);
+  if (inpP)  r.panne    = inpP.value;
+  if (selPr) r.priorite = selPr.value;
+  if (selSt) r.statut   = selSt.value;
+  if (inpM)  r.mttr     = parseFloat(inpM.value) || 0;
+  // Mettre a jour couleur de fond de la ligne
+  var tr = document.getElementById('tr-'+id);
+  if (tr) {
+    tr.style.background = r.statut==='EN COURS'?'#FFF5F5':r.statut==='EN ATTENTE'?'#FFFAF0':r.statut==='CLOTUREE'?'#E6FAF3':r.statut==='OK'?'#E8F0FB':'white';
+  }
+  // Mettre a jour les KPIs
+  var pannes = INTERVENTIONS.filter(function(x){ return x.statut==='EN COURS'||x.statut==='EN ATTENTE'; }).length;
+  document.getElementById('k-mtt').textContent = pannes || '—';
+  showToast('Sauvegarde : '+r.machine+' - '+r.client, '#2ECC8F');
+}
+
+
+function loadEqList() {
+  document.getElementById('eqlhdr').textContent='Equipements CHUT ('+EQUIPEMENTS_CHUT.length+')';
+  document.getElementById('eqliste').innerHTML=EQUIPEMENTS_CHUT.map(function(eq){
+    var tc=eq.statut==='EN PANNE'?'tr':eq.statut==='EN ATTENTE'?'to':'tg';
+    var dc=eq.disponibilite>=95?'#2ECC8F':eq.disponibilite>=90?'#F6AD55':'#E53E3E';
+    var ct=eq.pieces.reduce(function(s,p){ return s+p.cout; },0);
+    return '<div class="eqi" id="eqi-'+eq.id+'"><div style="flex:1;cursor:pointer" onclick="showFiche('+eq.id+')">'
+      +'<div style="font-size:14px;font-weight:700;margin-bottom:3px">'+eq.modele+'</div>'
+      +'<div style="font-size:11px;color:#718096;margin-bottom:6px">SN: '+eq.sn+' - '+eq.annee+'</div>'
+      +'<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'
+      +'<span class="tag '+tc+'">'+eq.statut+'</span>'
+      +'<span style="font-size:11px;color:'+dc+';font-weight:700">'+eq.disponibilite+'%</span>'
+      +'<span style="font-size:11px;color:#718096">'+Math.round(ct/1000)+'k MAD</span>'
+      +'</div></div><button class="bsup" onclick="askDel('+eq.id+')">X</button></div>';
+  }).join('')||'<div style="padding:20px;text-align:center;color:#718096">Aucun equipement</div>';
+}
+
+function showFiche(id) {
+  var eq=EQUIPEMENTS_CHUT.find(function(e){ return e.id===id; });
+  if(!eq)return;
+  EQ_ID=id;
+  document.querySelectorAll('.eqi').forEach(function(el){ el.classList.remove('sel'); });
+  var el=document.getElementById('eqi-'+id); if(el)el.classList.add('sel');
+  document.getElementById('fvide').style.display='none';
+  document.getElementById('fcontenu').style.display='block';
+  var ct=eq.pieces.reduce(function(s,p){ return s+p.cout; },0);
+  document.getElementById('f-tit').textContent=eq.modele+' CHU Tanger';
+  document.getElementById('f-sn').textContent='SN : '+eq.sn+' - Installe en '+eq.annee;
+  document.getElementById('f-d').textContent=eq.disponibilite+'%';
+  document.getElementById('f-p').textContent=eq.historique.length+' pannes';
+  document.getElementById('f-c').textContent=Math.round(ct/1000)+'k MAD';
+  document.getElementById('f-s').textContent=eq.software.length+'x';
+  document.getElementById('dispo-f').style.display='block'; document.getElementById('dispo-r').style.display='none';
+  document.getElementById('rent-f').style.display='block';  document.getElementById('rent-r').style.display='none';
+  document.getElementById('jp').value=eq.jours_panne>4?eq.jours_panne:'';
+  document.getElementById('jt').value=eq.jours_total||365;
+  document.getElementById('rct').value=eq.contrat_annuel||'';
+  document.getElementById('rcp').value=eq.cout_pieces_reel||'';
+  document.getElementById('rmo').value=eq.cout_mo_reel||'';
+  document.getElementById('f-hist').innerHTML=!eq.historique.length?'<p style="color:#718096;font-size:13px">Aucune panne</p>':eq.historique.map(function(h){
+    return '<div class="hl"><div class="hdate">'+h.date+'</div><div class="hinfo"><div class="hpn">'+h.panne+'</div><div class="hdet">Piece: '+h.pieces+' - MTTR: '+h.mttr+'h</div></div><div class="hcout">'+Math.round(h.cout/1000)+'k</div></div>';
+  }).join('');
+  document.getElementById('f-pieces').innerHTML=!eq.pieces.length?'<p style="color:#718096;font-size:13px">Aucune piece</p>':eq.pieces.map(function(p){
+    return '<div class="pl"><div><div style="font-size:13px;font-weight:600">'+p.nom+'</div><div style="font-size:12px;color:#718096">Qte: '+p.qte+'x</div></div><div style="font-size:12px;font-weight:700;color:#E53E3E">'+Math.round(p.cout/1000)+'k MAD</div></div>';
+  }).join('');
+  document.getElementById('f-sw').innerHTML=!eq.software.length?'<p style="color:#718096;font-size:13px">Aucune MAJ</p>':eq.software.map(function(s){
+    return '<div class="hl"><div class="hdate">'+s.date+'</div><div class="hinfo"><div class="hpn">'+s.version+'</div><div class="hdet">'+s.description+'</div></div></div>';
+  }).join('');
+}
+
+function dispReset() { document.getElementById('dispo-f').style.display='block'; document.getElementById('dispo-r').style.display='none'; }
+function rentReset() { document.getElementById('rent-f').style.display='block';  document.getElementById('rent-r').style.display='none'; }
+
+function calcDispo() {
+  var jp=parseInt(document.getElementById('jp').value), jt=parseInt(document.getElementById('jt').value)||365;
+  if(isNaN(jp)||jp<0){ alert('Entrez un nombre de jours valide'); return; }
+  if(jp>jt){ alert('Jours en panne superieur aux jours total'); return; }
+  var d=((jt-jp)/jt*100).toFixed(1), col=d>=95?'#2ECC8F':d>=90?'#F6AD55':'#E53E3E';
+  document.getElementById('f-d').textContent=d+'%'; document.getElementById('f-d').style.color=col;
+  document.getElementById('d-pct').textContent=d+'%';
+  document.getElementById('d-bar').style.width=d+'%'; document.getElementById('d-bar').style.background=col;
+  document.getElementById('d-det').textContent=(jt-jp)+' jours OK - '+jp+' jours en panne';
+  if(EQ_ID){ var eq=EQUIPEMENTS_CHUT.find(function(e){ return e.id===EQ_ID; }); if(eq){ eq.disponibilite=parseFloat(d);eq.jours_panne=jp;eq.jours_total=jt;loadEqList(); } }
+  document.getElementById('dispo-f').style.display='none'; document.getElementById('dispo-r').style.display='block';
+  showToast('Disponibilite : '+d+'%','#2ECC8F');
+}
+
+function calcRent() {
+  var ct=parseFloat(document.getElementById('rct').value), cp=parseFloat(document.getElementById('rcp').value)||0, mo=parseFloat(document.getElementById('rmo').value)||0;
+  if(isNaN(ct)||ct<=0){ alert('Entrez le prix du contrat'); return; }
+  var total=cp+mo, marge=ct-total, roi=total>0?((marge/total)*100).toFixed(0):100;
+  document.getElementById('r-ct').textContent=ct.toLocaleString('fr-FR')+' MAD';
+  document.getElementById('r-cr').textContent=total.toLocaleString('fr-FR')+' MAD';
+  document.getElementById('r-cp').textContent=cp.toLocaleString('fr-FR')+' MAD';
+  document.getElementById('r-mo').textContent=mo.toLocaleString('fr-FR')+' MAD';
+  document.getElementById('r-mg').textContent=marge.toLocaleString('fr-FR')+' MAD'; document.getElementById('r-mg').style.color=marge>0?'#1a7a54':'#E53E3E';
+  document.getElementById('r-roi').textContent=roi+'%'; document.getElementById('r-roi').style.color=marge>0?'#1a7a54':'#E53E3E';
+  var v=document.getElementById('r-verd'); v.className='verd '+(marge>0?'ben':'def');
+  v.textContent=marge>0?'BENEFICIAIRE - Marge : '+marge.toLocaleString('fr-FR')+' MAD | ROI : +'+roi+'%':'DEFICITAIRE - Perte : '+Math.abs(marge).toLocaleString('fr-FR')+' MAD | ROI : '+roi+'%';
+  if(EQ_ID){ var eq=EQUIPEMENTS_CHUT.find(function(e){ return e.id===EQ_ID; }); if(eq){ eq.contrat_annuel=ct;eq.cout_pieces_reel=cp;eq.cout_mo_reel=mo; } }
+  document.getElementById('rent-f').style.display='none'; document.getElementById('rent-r').style.display='block';
+  showToast(marge>0?'Beneficiaire +'+roi+'%':'Deficitaire '+roi+'%',marge>0?'#2ECC8F':'#E53E3E');
+}
+
+function addEquip() {
+  var mod=document.getElementById('a-mod').value, sn=document.getElementById('a-sn').value.trim();
+  var an=parseInt(document.getElementById('a-an').value), st=document.getElementById('a-st').value;
+  var di=parseInt(document.getElementById('a-di').value), co=parseInt(document.getElementById('a-co').value);
+  var pa=document.getElementById('a-pa').value.trim();
+  if(!sn){ alert('SN obligatoire'); return; }
+  if(!an){ alert('Annee obligatoire'); return; }
+  if(!di){ alert('Disponibilite obligatoire'); return; }
+  if(!co){ alert('Contrat obligatoire'); return; }
+  if(EQUIPEMENTS_CHUT.find(function(e){ return e.sn===sn; })){ alert('SN existe deja'); return; }
+  var nid=EQUIPEMENTS_CHUT.length?Math.max.apply(null,EQUIPEMENTS_CHUT.map(function(e){ return e.id; }))+1:1;
+  EQUIPEMENTS_CHUT.push({ id:nid,modele:mod,sn:sn,annee:an,statut:st,disponibilite:di,jours_panne:Math.round((100-di)*3.65),jours_total:365,contrat_annuel:co,historique:pa?[{date:'Ajout '+an,panne:pa,pieces:'A definir',mttr:2,cout:2000}]:[],pieces:pa?[{nom:'Main oeuvre',qte:1,cout:2000}]:[],software:[] });
+  closeModal('m-aj'); document.getElementById('a-sn').value=''; document.getElementById('a-pa').value='';
+  loadEqList(); showFiche(nid); showToast(mod+' ajoute !','#2ECC8F');
+}
+
+function askDel(id) {
+  var eq=EQUIPEMENTS_CHUT.find(function(e){ return e.id===id; }); if(!eq)return;
+  SUP_ID=id; document.getElementById('sup-n').textContent=eq.modele+' CHU Tanger'; document.getElementById('sup-s').textContent='SN : '+eq.sn+' - '+eq.annee; openModal('m-sup');
+}
+function delEquip() {
+  if(!SUP_ID)return;
+  var eq=EQUIPEMENTS_CHUT.find(function(e){ return e.id===SUP_ID; }), nom=eq?eq.modele:'Equipement';
+  EQUIPEMENTS_CHUT=EQUIPEMENTS_CHUT.filter(function(e){ return e.id!==SUP_ID; });
+  document.getElementById('fvide').style.display='flex'; document.getElementById('fcontenu').style.display='none';
+  closeModal('m-sup'); loadEqList(); showToast(nom+' supprime','#E53E3E'); SUP_ID=null;
+}
+
+// ====================== INTERVENTIONS ======================
+
+function fillEqSelect() {
+  var sel=document.getElementById('ni-eq'); if(sel.options.length>1)return;
+  EQUIPEMENTS_CHUT.forEach(function(eq){ var o=document.createElement('option');o.value=eq.id;o.textContent=eq.modele+' - '+eq.sn;sel.appendChild(o); });
+}
+function resetInt() { ['is','ip','im'].forEach(function(id){ document.getElementById(id).value=''; }); filtInt(); }
+function filtInt() {
+  var s=document.getElementById('is').value, p=document.getElementById('ip').value, m=document.getElementById('im').value;
+  var res=INTERVENTIONS_CHUT.filter(function(i){ return(!s||i.statut===s)&&(!p||i.priorite===p)&&(!m||i.machine===m); });
+  document.getElementById('i-co').textContent=res.filter(function(i){ return i.statut==='EN COURS'; }).length;
+  document.getElementById('i-at').textContent=res.filter(function(i){ return i.statut==='EN ATTENTE'; }).length;
+  document.getElementById('i-cl').textContent=res.filter(function(i){ return i.statut==='CLOTUREE'; }).length;
+  document.getElementById('i-mt').textContent=res.length?(res.reduce(function(s,i){ return s+i.mttr; },0)/res.length).toFixed(1)+'h':'—';
+  if(!res.length){ document.getElementById('liste-int').innerHTML='<div style="text-align:center;padding:40px;color:#718096">Aucune intervention</div>'; return; }
+  var tP=function(p){ return p==='CRITIQUE'?'<span class="tag tr">'+p+'</span>':p==='HAUTE'?'<span class="tag to">'+p+'</span>':'<span class="tag tgr">'+p+'</span>'; };
+  var tS=function(s){ return s==='EN COURS'?'<span class="tag tr">'+s+'</span>':s==='EN ATTENTE'?'<span class="tag to">'+s+'</span>':'<span class="tag tg">'+s+'</span>'; };
+  document.getElementById('liste-int').innerHTML=res.map(function(iv){
+    var cl=iv.priorite==='CRITIQUE'?'cr':iv.priorite==='HAUTE'?'ha':'no';
+    return '<div class="icarte '+cl+'" onclick="showDetInt('+iv.id+')">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+      +'<div><div style="font-size:15px;font-weight:700">'+iv.machine+'</div>'
+      +'<div style="font-size:12px;color:#718096;margin-top:2px">SN: '+iv.sn+' - '+iv.date+'</div></div>'
+      +'<div style="display:flex;gap:6px">'+tP(iv.priorite)+tS(iv.statut)+'</div></div>'
+      +'<div style="font-size:13px;color:#1A202C;margin-bottom:8px">'+iv.panne+'</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:12px;color:#718096"><span>'+iv.tech+'</span><span>'+iv.mttr+'h</span></div></div>';
+  }).join('');
+}
+function showDetInt(id) {
+  var iv=INTERVENTIONS_CHUT.find(function(i){ return i.id===id; }); if(!iv)return;
+  INT_ID=id;
+  document.getElementById('det-t').textContent=iv.machine+' - CHU Tanger';
+  document.getElementById('det-m').textContent=iv.machine; document.getElementById('det-s').textContent=iv.sn;
+  document.getElementById('det-d').textContent=iv.date+' - '+iv.client;
+  document.getElementById('det-mt').textContent=iv.mttr+'h - '+iv.tech;
+  document.getElementById('det-p').textContent=iv.panne;
+  var tP=iv.priorite==='CRITIQUE'?'<span class="tag tr">'+iv.priorite+'</span>':iv.priorite==='HAUTE'?'<span class="tag to">'+iv.priorite+'</span>':'<span class="tag tgr">'+iv.priorite+'</span>';
+  var tS=iv.statut==='EN COURS'?'<span class="tag tr">'+iv.statut+'</span>':iv.statut==='EN ATTENTE'?'<span class="tag to">'+iv.statut+'</span>':'<span class="tag tg">'+iv.statut+'</span>';
+  document.getElementById('det-tags').innerHTML=tP+' '+tS;
+  var act='';
+  if(iv.statut==="EN ATTENTE") act='<button id="btn-demarrer" style="width:100%;padding:12px;background:#E53E3E;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">Demarrer</button>';
+  else if(iv.statut==="EN COURS") act='<button id="btn-cloturer" style="width:100%;padding:12px;background:#2ECC8F;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">Cloturer</button>';
+  else act='<div style="text-align:center;padding:10px;color:#1a7a54;font-weight:700;background:#E6FAF3;border-radius:10px">Cloturee</div>';
+  document.getElementById('det-act').innerHTML=act;
+  openModal('m-det');
+  // Attacher les events sur les boutons (evite les guillemets dans onclick)
+  var btnD = document.getElementById('btn-demarrer');
+  var btnC = document.getElementById('btn-cloturer');
+  if (btnD) btnD.addEventListener('click', function() { changeInt(id, 'EN COURS'); });
+  if (btnC) btnC.addEventListener('click', function() { changeInt(id, 'CLOTUREE'); });
+}
+function changeInt(id, st) {
+  var iv = INTERVENTIONS_CHUT.find(function(i){ return i.id === id; });
+  if (!iv) return;
+  iv.statut = st;
+  // Generation automatique du rapport si cloture
+  if (st === 'CLOTUREE') {
+    genererRapport(iv);
+  }
+  closeModal('m-det');
+  filtInt();
+  showToast(st === 'EN COURS' ? 'Intervention demarree' : 'Intervention cloturee — Rapport genere', st === 'EN COURS' ? '#E53E3E' : '#2ECC8F');
+}
+function addInt() {
+  var eqId=parseInt(document.getElementById('ni-eq').value), de=document.getElementById('ni-de').value.trim();
+  var pr=document.getElementById('ni-pr').value, mt=parseFloat(document.getElementById('ni-mt').value)||2;
+  if(!eqId){ alert('Selectionnez un equipement'); return; }
+  if(!de){ alert('Decrivez la panne'); return; }
+  var eq=EQUIPEMENTS_CHUT.find(function(e){ return e.id===eqId; });
+  var nid=INTERVENTIONS_CHUT.length+1;
+  INTERVENTIONS_CHUT.push({ id:nid,machine:eq.modele,sn:eq.sn,client:'CHU Tanger',panne:de,priorite:pr,statut:'EN ATTENTE',mttr:mt,date:new Date().toLocaleDateString('fr-FR'),tech:'A assigner' });
+  closeModal('m-int'); document.getElementById('ni-de').value=''; document.getElementById('ni-mt').value='';
+  filtInt(); showToast('Intervention creee','#2ECC8F');
+}
+function goIA() {
+  var iv=INTERVENTIONS_CHUT.find(function(i){ return i.id===INT_ID; }); if(!iv)return;
+  closeModal('m-det');
+  goPage('ia',document.querySelector('.nb:nth-child(5)'));
+  setTimeout(function(){ document.getElementById('ia-in').value=iv.machine+' SN '+iv.sn+' - '+iv.panne; sendMsg(); },300);
+}
+
+// ====================== PLANNING ======================
+
+function initPlanning() {
+  // Remplir equipements
+  var sel=document.getElementById('pl-equip');
+  if(sel.options.length<=1) {
+    sel.innerHTML='<option value="">-- Choisir un equipement --</option>';
+    EQUIPEMENTS_CHUT.forEach(function(eq){ var o=document.createElement('option');o.value=eq.id;o.textContent=eq.modele+' - '+eq.sn;sel.appendChild(o); });
+  }
+  // Remplir techniciens depuis USERS (synchronise)
+  var selT=document.getElementById('pl-tech');
+  selT.innerHTML='';
+  var techs=getTechs();
+  if(techs.length===0) {
+    selT.innerHTML='<option value="">Aucun technicien</option>';
+  } else {
+    techs.forEach(function(t){
+      var o=document.createElement('option');
+      o.value=t.prenom;
+      o.textContent=t.prenom+' - '+t.role;
+      selT.appendChild(o);
+    });
+  }
+  if(!document.getElementById('pl-date').value) {
+    document.getElementById('pl-date').value=new Date().toISOString().split('T')[0];
+  }
+  afficherCal();
+  afficherTechs();
+  majStatsPlan();
+}
+
+function majStatsPlan() {
+  var now=new Date(), mois=now.getMonth(), annee=now.getFullYear();
+  var ceMois=EVENEMENTS.filter(function(e){ var d=new Date(e.date);return d.getMonth()===mois&&d.getFullYear()===annee; });
+  document.getElementById('pl-tot').textContent=ceMois.length;
+  document.getElementById('pl-enc').textContent=EVENEMENTS.filter(function(e){ return e.type==='CORRECTIVE'; }).length;
+  var today=now.toISOString().split('T')[0];
+  var occ=new Set(EVENEMENTS.filter(function(e){ return e.date===today; }).map(function(e){ return e.tech; }));
+  var techs=getTechs(); document.getElementById('pl-lib').textContent=(techs.length-occ.size)+' / '+techs.length;
+}
+
+function afficherTechs() {
+  var now=new Date(), h={};
+  var techs = getTechs(); // Utilise les vrais comptes USERS
+  EVENEMENTS.forEach(function(e){ var d=new Date(e.date);if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear())h[e.tech]=(h[e.tech]||0)+e.duree; });
+  if (!techs.length) {
+    document.getElementById('tech-list').innerHTML='<div style="padding:14px;color:#718096;font-size:13px;text-align:center">Aucun technicien enregistre</div>';
+    return;
+  }
+  document.getElementById('tech-list').innerHTML=techs.map(function(t, i){
+    var nom = t.prenom;
+    var hrs=h[nom]||0, pct=Math.min(Math.round((hrs/40)*100),100);
+    var col=pct>80?'#E53E3E':pct>60?'#F6AD55':'#2ECC8F';
+    var nb=EVENEMENTS.filter(function(e){ return e.tech===nom; }).length;
+    return '<div style="padding:10px 0;border-bottom:1px solid #F0F4F8">'
+      +'<div style="font-size:13px;font-weight:700;margin-bottom:2px">'+nom+' <span style="font-size:10px;color:#718096;font-weight:400">'+t.role+'</span></div>'
+      +'<div style="font-size:11px;color:#718096;margin-bottom:4px">'+nb+' interventions - '+hrs+'h ce mois</div>'
+      +'<div class="tech-barre-fond"><div class="tech-barre-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function afficherCal() {
+  var mois=CAL_MOIS, annee=CAL_ANNEE;
+  var noms=['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+  document.getElementById('cal-titre').textContent=noms[mois]+' '+annee;
+  var premier=new Date(annee,mois,1), dernier=new Date(annee,mois+1,0);
+  var debut=(premier.getDay()+6)%7;
+  var todayStr=new Date().toISOString().split('T')[0];
+  var cells='';
+  for(var i=0;i<debut;i++){ var d=new Date(annee,mois,1-(debut-i));cells+='<div class="cal-cell gris"><div class="cal-num">'+d.getDate()+'</div></div>'; }
+  for(var j=1;j<=dernier.getDate();j++){
+    var ds=annee+'-'+String(mois+1).padStart(2,'0')+'-'+String(j).padStart(2,'0');
+    var isT=ds===todayStr;
+    var numH=isT?'<div class="cal-num auj">'+j+'</div>':'<div class="cal-num">'+j+'</div>';
+    var evJ=EVENEMENTS.filter(function(e){ return e.date===ds; });
+    var evH=evJ.map(function(e){
+      var cl=e.type==='CORRECTIVE'&&e.priorite==='CRITIQUE'?'cr':e.type==='CORRECTIVE'&&e.priorite==='HAUTE'?'ha':e.type==='PREVENTIVE'?'pr':'no';
+      return '<div class="ev '+cl+'" onclick="voirEv('+e.id+');event.stopPropagation();" title="'+e.equip+' - '+e.tech+'">'+e.tech.split(' ')[0]+':'+e.equip+'</div>';
+    }).join('');
+    cells+='<div class="cal-cell" onclick="clicJour("'+ds+'")">'+'<div>'+numH+evH+'</div></div>';
+  }
+  var reste=(7-(debut+dernier.getDate())%7)%7;
+  for(var k=1;k<=reste;k++) cells+='<div class="cal-cell gris"><div class="cal-num">'+k+'</div></div>';
+  document.getElementById('cal-corps').innerHTML=cells;
+  var hint=document.getElementById('cal-hint');
+  var evMois=EVENEMENTS.filter(function(e){ var d=new Date(e.date);return d.getMonth()===mois&&d.getFullYear()===annee; });
+  if(hint) hint.style.display=evMois.length===0?'block':'none';
+}
+
+function changerMois(delta) {
+  if(delta===0){ CAL_MOIS=new Date().getMonth();CAL_ANNEE=new Date().getFullYear(); }
+  else{ CAL_MOIS+=delta; if(CAL_MOIS>11){CAL_MOIS=0;CAL_ANNEE++;} if(CAL_MOIS<0){CAL_MOIS=11;CAL_ANNEE--;} }
+  afficherCal();
+}
+
+function clicJour(ds) {
+  document.getElementById('pl-date').value=ds;
+  showToast('Date : '+ds.split('-').reverse().join('/'),'#1B4F8A');
+  document.getElementById('pl-desc').focus();
+}
+
+function ajouterEv() {
+  var eqId=parseInt(document.getElementById('pl-equip').value);
+  var tech=document.getElementById('pl-tech').value;
+  var date=document.getElementById('pl-date').value;
+  var duree=parseFloat(document.getElementById('pl-duree').value);
+  var type=document.getElementById('pl-type').value;
+  var desc=document.getElementById('pl-desc').value.trim();
+  var prioEl=document.querySelector('input[name="pl-prio"]:checked');
+  var prio=prioEl?prioEl.value:'NORMALE';
+  if(!eqId){ alert('Selectionnez un equipement'); return; }
+  if(!date){ alert('Choisissez une date'); return; }
+  if(!duree){ alert('Entrez une duree en heures'); return; }
+  if(!desc){ alert('Entrez une description'); return; }
+  var eq=EQUIPEMENTS_CHUT.find(function(e){ return e.id===eqId; });
+  EVENEMENTS.push({ id:EV_ID_CTR++,equip:eq.modele,sn:eq.sn,tech:tech,date:date,duree:duree,type:type,desc:desc,priorite:prio });
+  document.getElementById('pl-desc').value=''; document.getElementById('pl-duree').value='';
+  document.getElementById('pl-equip').value=''; document.getElementById('pl-date').value='';
+  document.querySelector('input[name="pl-prio"][value="NORMALE"]').checked=true;
+  var d=new Date(date); CAL_MOIS=d.getMonth(); CAL_ANNEE=d.getFullYear();
+  afficherCal(); afficherTechs(); majStatsPlan();
+  showToast('Ajoute le '+date.split('-').reverse().join('/'),'#2ECC8F');
+}
+
+function voirEv(id) {
+  var ev=EVENEMENTS.find(function(e){ return e.id===id; }); if(!ev)return;
+  EV_SUP_ID=id;
+  document.getElementById('ev-tit').textContent=ev.equip+' - SN: '+ev.sn;
+  document.getElementById('ev-tech').textContent=ev.tech;
+  document.getElementById('ev-date').textContent=ev.date.split('-').reverse().join('/');
+  document.getElementById('ev-duree').textContent=ev.duree+'h';
+  document.getElementById('ev-type').textContent=ev.type;
+  document.getElementById('ev-desc').textContent=ev.desc;
+  var tP=ev.priorite==='CRITIQUE'?'<span class="tag tr">CRITIQUE</span>':ev.priorite==='HAUTE'?'<span class="tag to">HAUTE</span>':'<span class="tag tgr">NORMALE</span>';
+  var tT=ev.type==='CORRECTIVE'?'<span class="tag tr">CORRECTIVE</span>':ev.type==='PREVENTIVE'?'<span class="tag tg">PREVENTIVE</span>':'<span class="tag tb">VERIFICATION</span>';
+  document.getElementById('ev-tags').innerHTML=tP+' '+tT;
+  openModal('m-ev');
+}
+function suppEv() {
+  if(!EV_SUP_ID)return;
+  EVENEMENTS=EVENEMENTS.filter(function(e){ return e.id!==EV_SUP_ID; });
+  closeModal('m-ev'); afficherCal(); afficherTechs(); majStatsPlan();
+  showToast('Intervention supprimee du planning','#E53E3E'); EV_SUP_ID=null;
+}
+
+// ====================== ASSISTANT IA ======================
+
+var CTX = 'Tu es expert en maintenance equipements biomedicaux Philips au CHU Tanger. '
+  + 'Tu connais les codes erreur Philips. '
+  + 'Parc CHUT 27 equipements : Affiniti 50G, Affiniti 70G (US720F1439), Affiniti 70C, CX50, Innosight. '
+  + 'Pieces disponibles : EBOX, Power Regulator board, Power Supply VPPM, Acquisition Module, Batterie Li-ion, SSD, Transducteur L12-5, C5-1. '
+  + 'CODES ERREUR : E1=Alimentation, E2=Acquisition, E3=Transducteur/Sonde, E4=Surchauffe, E5=SSD/Disque, E6=EBOX, E7=Reseau/DICOM, E8=Batterie, E9=Logiciel, E10=IMB. '
+  + 'Si code erreur : identifie cause, pieces a verifier, MTTR. '
+  + 'Format : Diagnostic (% confiance), Pieces recommandees, MTTR estime, Etapes reparation, Conseil. '
+  + 'Reponds en francais.';
+
+function addBotMsg(h) {
+  var d=document.createElement('div'); d.className='mbot'; d.innerHTML=h;
+  document.getElementById('ia-msgs').appendChild(d);
+  var z=document.getElementById('ia-msgs'); z.scrollTop=z.scrollHeight; return d;
+}
+function quickMsg(t) { document.getElementById('ia-in').value=t; sendMsg(); }
+
+async function sendMsg() {
+  var inp=document.getElementById('ia-in'), txt=inp.value.trim(); if(!txt)return;
+  inp.value=''; inp.disabled=true;
+  var du=document.createElement('div'); du.className='muser'; du.textContent=txt;
+  document.getElementById('ia-msgs').appendChild(du);
+  var z=document.getElementById('ia-msgs'); z.scrollTop=z.scrollHeight;
+  var load=addBotMsg('<em style="color:#718096">Analyse en cours...</em>');
+  try {
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:CTX,messages:[{role:'user',content:txt}]})});
+    var data=await r.json();
+    var rep=data.content&&data.content[0]?data.content[0].text:'Reponse indisponible.';
+    load.innerHTML=rep.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    var fb=document.createElement('div'); fb.style.cssText='display:flex;gap:8px;margin-top:10px';
+    fb.innerHTML='<button onclick="fbIA(true,this.parentNode)" style="padding:6px 14px;background:#E6FAF3;color:#1a7a54;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">Correct</button><button onclick="fbIA(false,this.parentNode)" style="padding:6px 14px;background:#FFF5F5;color:#E53E3E;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">Corriger</button>';
+    document.getElementById('ia-msgs').appendChild(fb); z.scrollTop=z.scrollHeight;
+  } catch(e) { load.innerHTML=fallback(txt); }
+  inp.disabled=false; inp.focus();
+}
+function fbIA(ok,el){ el.remove(); addBotMsg(ok?'Merci ! Diagnostic enregistre.':'Correction notee.'); }
+
+function fallback(t) {
+  t=t.toLowerCase();
+  if(t.includes('e1')||t.includes('alim')||t.includes('power'))return '<strong>Code E1 - Alimentation</strong><br>Cause : Power Supply VPPM (90%) ou fusible (60%)<br>Pieces : Power Supply VPPM - Power Regulator board<br>Etapes : 1.Verifier fusibles 2.Mesurer tensions 3.Remplacer Power Supply<br>MTTR : 3h';
+  if(t.includes('e2')||t.includes('acqui'))return '<strong>Code E2 - Acquisition image</strong><br>Cause : Acquisition Module (85%) ou IMB (70%)<br>Pieces : Acquisition Module<br>MTTR : 4h';
+  if(t.includes('e3')||t.includes('sonde')||t.includes('transducteur'))return '<strong>Code E3 - Transducteur/Sonde</strong><br>Cause : Cristaux uses (85%) - Cable (70%)<br>Pieces : Transducteur L12-5 ou C5-1<br>Etapes : 1.Tester autre sonde 2.Si OK sonde defectueuse 3.Commander remplacement<br>MTTR : 3.5h';
+  if(t.includes('e4')||t.includes('surchauffe'))return '<strong>Code E4 - Surchauffe</strong><br>Cause : Filtre bouche (90%) - Ventilateur (75%)<br>Pieces : Filtre acoustique<br>Etapes : 1.Eteindre 30min 2.Nettoyer filtres 3.Verifier ventilateurs<br>MTTR : 1.5h';
+  if(t.includes('e5')||t.includes('ssd')||t.includes('disque'))return '<strong>Code E5 - SSD/Disque</strong><br>Cause : SSD sature (95%) ou defaillant (40%)<br>Pieces : SSD 1To<br>Etapes : 1.Verifier espace 2.Archiver donnees 3.Remplacer SSD + reinstaller SW<br>MTTR : 2.5h';
+  if(t.includes('e6')||t.includes('ebox'))return '<strong>Code E6 - EBOX</strong><br>Cause : EBOX defectueuse (90%)<br>Pieces : EBOX - Acquisition Module<br>Etapes : 1.Verifier connexions 2.Redemarrer 3.Remplacer EBOX<br>MTTR : 4h';
+  if(t.includes('e7')||t.includes('reseau')||t.includes('dicom'))return '<strong>Code E7 - Reseau/DICOM</strong><br>Cause : Config reseau (80%) - Switch (50%)<br>Pieces : Aucune piece<br>Etapes : 1.Verifier cable 2.Ping serveur DICOM 3.Reconfigurer<br>MTTR : 1.5h';
+  if(t.includes('e8')||t.includes('batterie'))return '<strong>Code E8 - Batterie</strong><br>Cause : Batterie fin de vie (95%)<br>Pieces : Batterie Li-ion<br>Etapes : 1.Verifier age batterie 2.Tester capacite 3.Remplacer<br>MTTR : 1h';
+  if(t.includes('e9')||t.includes('logiciel')||t.includes('software'))return '<strong>Code E9 - Logiciel</strong><br>Cause : Corruption systeme (85%)<br>Pieces : Aucune piece (intervention logicielle)<br>Etapes : 1.Redemarrer 2.Diagnostics SW 3.Reinstaller SR7.0<br>MTTR : 2h';
+  if(t.includes('e10')||t.includes('imb'))return '<strong>Code E10 - IMB</strong><br>Cause : IMB defectueux (90%)<br>Pieces : IMB2<br>MTTR : 3.5h';
+  if(t.includes('gas spring')||t.includes('bras'))return '<strong>Gas spring defaillant</strong><br>Cause : Gas spring fin de vie (95%)<br>Pieces : Gas spring 500N Stabilus<br>MTTR : 1.5h';
+  return 'Code non reconnu hors-ligne. Connectez-vous a internet pour IA complete. Codes disponibles : E1 Alimentation, E2 Acquisition, E3 Sonde, E4 Surchauffe, E5 SSD, E6 EBOX, E7 Reseau, E8 Batterie, E9 Logiciel, E10 IMB';
+}
+
+// ====================== UTILITAIRES ======================
+
+function showToast(msg, col) {
+  var t=document.getElementById('toast'); t.textContent=msg; t.style.background=col||'#1A202C';
+  t.classList.add('on'); setTimeout(function(){ t.classList.remove('on'); },3000);
+}
+
+// ====================== ADMINISTRATION ======================
+
+var DEL_USER_KEY = null;
+
+function chargerListeComptes() {
+  var keys = Object.keys(USERS);
+  var html = '';
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var u = USERS[key];
+    var isAdm = u.isAdmin;
+    var rc = isAdm ? '#E53E3E' : u.role === 'Technicien' ? '#718096' : '#1B4F8A';
+    var btnSuppr = isAdm
+      ? '<span style="font-size:11px;color:#718096">Protege</span>'
+      : '<button id="btn-del-' + key + '" style="background:#FFF5F5;color:#E53E3E;border:1px solid #E53E3E;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Supprimer</button>';
+    var tag = isAdm ? ' (Vous)' : '';
+    html += '<div style="padding:14px 16px;border-bottom:1px solid #F0F4F8;display:flex;align-items:center;justify-content:space-between">';
+    html += '<div>';
+    html += '<div style="font-size:14px;font-weight:700;margin-bottom:3px">' + u.prenom + tag + '</div>';
+    html += '<div style="font-size:12px;color:#718096;margin-bottom:4px">Login : <strong>' + key + '</strong></div>';
+    html += '<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;background:#F0F4F8;color:' + rc + '">' + u.role + '</span>';
+    html += '</div>' + btnSuppr + '</div>';
+  }
+  document.getElementById('admin-liste-comptes').innerHTML = html;
+  // Attacher les événements après rendu
+  for (var j = 0; j < keys.length; j++) {
+    var k = keys[j];
+    if (!USERS[k].isAdmin) {
+      var btn = document.getElementById('btn-del-' + k);
+      if (btn) {
+        btn.setAttribute('data-key', k);
+        btn.addEventListener('click', function() { demanderSupCompte(this.getAttribute('data-key')); });
+      }
+    }
+  }
+}
+
+function ajouterCompte() {
+  var username = document.getElementById('adm-user').value.trim().toLowerCase();
+  var prenom   = document.getElementById('adm-prenom').value.trim();
+  var role     = document.getElementById('adm-role').value;
+  var pwd      = document.getElementById('adm-pwd').value;
+
+  if (!username) { alert('Entrez un nom d identifiant'); return; }
+  if (!prenom)   { alert('Entrez un prenom'); return; }
+  if (!pwd)      { alert('Entrez un mot de passe'); return; }
+  if (USERS[username]) { alert('Ce nom d identifiant existe deja'); return; }
+  if (pwd.length < 4)  { alert('Mot de passe trop court (4 caracteres minimum)'); return; }
+
+  USERS[username] = { prenom: prenom, role: role, pwd: pwd, isAdmin: false };
+
+  document.getElementById('adm-user').value   = '';
+  document.getElementById('adm-prenom').value = '';
+  document.getElementById('adm-pwd').value    = '';
+
+  chargerListeComptes();
+  // Rafraichir le planning si ouvert
+  if (document.getElementById('pg-planning').classList.contains('on')) {
+    initPlanning();
+  }
+  showToast('Compte ' + prenom + ' cree - Technicien ajoute au planning', '#2ECC8F');
+}
+
+function demanderSupCompte(key) {
+  var u = USERS[key]; if (!u) return;
+  DEL_USER_KEY = key;
+  document.getElementById('del-user-nom').textContent  = u.prenom + ' (' + key + ')';
+  document.getElementById('del-user-role').textContent = 'Role : ' + u.role;
+  openModal('m-del-user');
+}
+
+function supprimerCompte() {
+  if (!DEL_USER_KEY) return;
+  var nom = USERS[DEL_USER_KEY] ? USERS[DEL_USER_KEY].prenom : DEL_USER_KEY;
+  delete USERS[DEL_USER_KEY];
+  closeModal('m-del-user');
+  chargerListeComptes();
+  // Rafraichir le planning si ouvert (sync techniciens)
+  if (document.getElementById('pg-planning').classList.contains('on')) {
+    initPlanning();
+  }
+  showToast('Compte ' + nom + ' supprime - Planning mis a jour', '#E53E3E');
+  DEL_USER_KEY = null;
+}
+
+// ====================== RAPPORTS ======================
+
+function genererRapport(iv) {
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('fr-FR');
+  var heureStr = now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  var eq = EQUIPEMENTS_CHUT.find(function(e){ return e.sn === iv.sn; });
+
+  var rapport = {
+    id: RPT_CTR++,
+    num: 'RPT-' + String(RPT_CTR - 1).padStart(4, '0'),
+    dateGeneration: dateStr + ' a ' + heureStr,
+    dateIntervention: iv.date,
+    machine: iv.machine,
+    sn: iv.sn,
+    client: iv.client,
+    tech: iv.tech,
+    panne: iv.panne,
+    priorite: iv.priorite,
+    statut: iv.statut,
+    mttr: iv.mttr,
+    pieces: eq ? eq.pieces : [],
+    coutTotal: eq ? eq.pieces.reduce(function(s,p){ return s+p.cout; }, 0) : 0,
+    disponibilite: eq ? eq.disponibilite : null,
+    conclusion: 'Intervention realisee par ' + iv.tech + ' en ' + iv.mttr + 'h. Equipement verifie et remis en service.',
+    signature: iv.tech,
+  };
+
+  RAPPORTS.unshift(rapport);
+
+  // Mettre a jour le badge si la page rapports est active
+  if (document.getElementById('pg-rapports').classList.contains('on')) {
+    afficherRapports(RAPPORTS);
+  }
+}
+
+function filtrerRapports() {
+  var s = document.getElementById('rp-filtre-statut').value;
+  var res = s ? RAPPORTS.filter(function(r){ return r.statut === s; }) : RAPPORTS;
+  afficherRapports(res);
+}
+
+function afficherRapports(data) {
+  var total = RAPPORTS.length;
+  var clo   = RAPPORTS.filter(function(r){ return r.statut === 'CLOTUREE'; }).length;
+  var enc   = RAPPORTS.filter(function(r){ return r.statut === 'EN COURS'; }).length;
+  var mtt   = total ? (RAPPORTS.reduce(function(s,r){ return s+r.mttr; }, 0) / total).toFixed(1) : 0;
+  document.getElementById('rp-tot').textContent = total;
+  document.getElementById('rp-clo').textContent = clo;
+  document.getElementById('rp-enc').textContent = enc;
+  document.getElementById('rp-mtt').textContent = total ? mtt + 'h' : '—';
+
+  if (!data.length) {
+    document.getElementById('liste-rapports').innerHTML =
+      '<div style="text-align:center;padding:60px 20px;color:#718096">'
+      + '<div style="font-size:48px;margin-bottom:12px">📄</div>'
+      + '<div style="font-size:16px;font-weight:700;color:#1A202C;margin-bottom:6px">Aucun rapport</div>'
+      + '<div style="font-size:13px">Cloturez une intervention pour generer un rapport automatiquement</div>'
+      + '</div>';
+    return;
+  }
+
+  var pCl = function(p){ return p==='CRITIQUE'?'<span class="tag tr">'+p+'</span>':p==='HAUTE'?'<span class="tag to">'+p+'</span>':'<span class="tag tgr">'+p+'</span>'; };
+  var sS  = function(s){ return s==='CLOTUREE'?'<span class="tag tg">CLOTUREE</span>':s==='EN COURS'?'<span class="tag tr">EN COURS</span>':'<span class="tag to">'+s+'</span>'; };
+
+  document.getElementById('liste-rapports').innerHTML = data.map(function(r) {
+    var piecesHtml = r.pieces.length
+      ? r.pieces.map(function(p){ return '<span style="background:#E8F0FB;color:#1B4F8A;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;margin-right:4px">'+p.nom+' x'+p.qte+'</span>'; }).join('')
+      : '<span style="color:#718096;font-size:12px">Aucune piece remplacee</span>';
+    var cl = r.priorite === 'CRITIQUE' ? 'critique' : r.priorite === 'HAUTE' ? 'haute' : '';
+
+    return '<div class="rapport-carte ' + cl + '" id="rpt-' + r.id + '">'
+      + '<div class="rapport-entete">'
+      + '<div>'
+      + '<div class="rapport-num">' + r.num + ' — ' + r.dateGeneration + '</div>'
+      + '<div class="rapport-machine">' + r.machine + '</div>'
+      + '<div class="rapport-sn">N Serie : ' + r.sn + ' — ' + r.client + '</div>'
+      + '</div>'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap">' + pCl(r.priorite) + ' ' + sS(r.statut) + '</div>'
+      + '</div>'
+      + '<div class="rapport-grille">'
+      + '<div class="rapport-champ"><div class="rapport-lbl">Date intervention</div><div class="rapport-val">' + r.dateIntervention + '</div></div>'
+      + '<div class="rapport-champ"><div class="rapport-lbl">Technicien</div><div class="rapport-val">' + r.tech + '</div></div>'
+      + '<div class="rapport-champ"><div class="rapport-lbl">MTTR</div><div class="rapport-val">' + r.mttr + 'h</div></div>'
+      + '<div class="rapport-champ"><div class="rapport-lbl">Cout maintenance</div><div class="rapport-val">' + (r.coutTotal ? Math.round(r.coutTotal/1000)+'k MAD' : 'Non renseigne') + '</div></div>'
+      + (r.disponibilite ? '<div class="rapport-champ"><div class="rapport-lbl">Disponibilite</div><div class="rapport-val">' + r.disponibilite + '%</div></div>' : '')
+      + '</div>'
+      + '<div class="rapport-desc"><strong>Panne :</strong> ' + r.panne + '</div>'
+      + '<div style="margin-bottom:12px">'
+      + '<div style="font-size:11px;color:#718096;font-weight:700;text-transform:uppercase;margin-bottom:6px">Pieces remplacees</div>'
+      + piecesHtml
+      + '</div>'
+      + '<div style="background:#E6FAF3;border-radius:8px;padding:10px;margin-bottom:14px;font-size:12px;color:#1a7a54">'
+      + '<strong>Conclusion :</strong> ' + r.conclusion
+      + '</div>'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #F0F4F8;padding-top:12px">'
+      + '<div style="font-size:12px;color:#718096">Signe par : <strong>' + r.signature + '</strong></div>'
+      + '<div class="rapport-actions">'
+      + '<button class="btn-impr gris" onclick="imprimerRapport(' + r.id + ')">🖨️ Imprimer</button>'
+      + '<button class="btn-impr vert" onclick="voirDetailRapport(' + r.id + ')">👁️ Detail</button>'
+      + '<button class="btn-impr" style="background:#FFF5F5;color:#E53E3E;border:1px solid #E53E3E" onclick="supprimerRapport(' + r.id + ')">🗑️</button>'
+      + '</div></div></div>';
+  }).join('');
+}
+
+function imprimerRapport(id) {
+  var r = RAPPORTS.find(function(x){ return x.id === id; });
+  if (!r) return;
+  var w = window.open('', '_blank');
+  w.document.write(
+    '<html><head><title>Rapport ' + r.num + '</title>'
+    + '<style>body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:30px;color:#1A202C}'
+    + 'h1{color:#1B4F8A;border-bottom:3px solid #1B4F8A;padding-bottom:10px}'
+    + '.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}'
+    + '.champ{background:#F0F4F8;padding:10px;border-radius:8px}'
+    + '.lbl{font-size:10px;color:#718096;font-weight:700;text-transform:uppercase}'
+    + '.val{font-size:14px;font-weight:700;margin-top:3px}'
+    + '.panne-box{background:#FFF8E6;padding:12px;border-radius:8px;border-left:4px solid #F6AD55;margin:12px 0}'
+    + '.concl-box{background:#E6FAF3;padding:12px;border-radius:8px;margin:12px 0}'
+    + '.footer{margin-top:40px;border-top:2px solid #E2E8F0;padding-top:16px;display:flex;justify-content:space-between}'
+    + '.sign-box{border-top:1px solid #1A202C;padding-top:6px;width:200px;text-align:center;font-size:12px}'
+    + '@media print{button{display:none}}'
+    + '</style></head><body>'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">'
+    + '<div><h1>Rapport d Intervention</h1><div style="color:#718096;font-size:13px">BiomédMaint — Equipements Philips</div></div>'
+    + '<div style="text-align:right"><div style="font-size:18px;font-weight:700;color:#1B4F8A">' + r.num + '</div><div style="font-size:12px;color:#718096">Genere le ' + r.dateGeneration + '</div></div>'
+    + '</div>'
+    + '<div class="grid">'
+    + '<div class="champ"><div class="lbl">Machine</div><div class="val">' + r.machine + '</div></div>'
+    + '<div class="champ"><div class="lbl">N Serie</div><div class="val">' + r.sn + '</div></div>'
+    + '<div class="champ"><div class="lbl">Client</div><div class="val">' + r.client + '</div></div>'
+    + '<div class="champ"><div class="lbl">Date intervention</div><div class="val">' + r.dateIntervention + '</div></div>'
+    + '<div class="champ"><div class="lbl">Technicien</div><div class="val">' + r.tech + '</div></div>'
+    + '<div class="champ"><div class="lbl">MTTR</div><div class="val">' + r.mttr + 'h</div></div>'
+    + '<div class="champ"><div class="lbl">Priorite</div><div class="val">' + r.priorite + '</div></div>'
+    + '<div class="champ"><div class="lbl">Cout maintenance</div><div class="val">' + (r.coutTotal ? Math.round(r.coutTotal/1000) + 'k MAD' : 'Non renseigne') + '</div></div>'
+    + '</div>'
+    + '<div class="panne-box"><strong>Panne :</strong> ' + r.panne + '</div>'
+    + '<div><strong>Pieces remplacees :</strong> ' + (r.pieces.length ? r.pieces.map(function(p){ return p.nom + ' x' + p.qte + ' (' + Math.round(p.cout/1000) + 'k MAD)'; }).join(', ') : 'Aucune') + '</div>'
+    + '<div class="concl-box"><strong>Conclusion :</strong> ' + r.conclusion + '</div>'
+    + '<div class="footer">'
+    + '<div><div style="font-size:12px;color:#718096;margin-bottom:8px">Responsable service</div><div class="sign-box">Signature</div></div>'
+    + '<div><div style="font-size:12px;color:#718096;margin-bottom:8px">Technicien</div><div class="sign-box">' + r.signature + '</div></div>'
+    + '</div>'
+    + '<scr' + 'ipt>window.print();</scr' + 'ipt>'
+    + '</body></html>'
+  );
+}
+
+function imprimerTous() {
+  if (!RAPPORTS.length) { alert('Aucun rapport a imprimer'); return; }
+  window.print();
+}
+
+function exporterCSV() {
+  if (!RAPPORTS.length) { alert('Aucun rapport a exporter'); return; }
+  var lignes = ['Numero;Date;Machine;SN;Client;Technicien;Panne;Priorite;Statut;MTTR;Cout'];
+  RAPPORTS.forEach(function(r) {
+    lignes.push([r.num, r.dateIntervention, r.machine, r.sn, r.client, r.tech, r.panne, r.priorite, r.statut, r.mttr, r.coutTotal].join(';'));
+  });
+  var csv = lignes.join(String.fromCharCode(10));
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'rapports_biomedmaint.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exporte avec succes', '#2ECC8F');
+}
+
+function voirDetailRapport(id) {
+  var r = RAPPORTS.find(function(x){ return x.id === id; });
+  if (!r) return;
+  imprimerRapport(id);
+}
+
+function supprimerRapport(id) {
+  if (!confirm('Supprimer ce rapport ?')) return;
+  RAPPORTS = RAPPORTS.filter(function(r){ return r.id !== id; });
+  afficherRapports(RAPPORTS);
+  showToast('Rapport supprime', '#E53E3E');
+}
+
+// ====================== PIECES DE RECHANGE ======================
+
+function initPieces() {
+  afficherPieces(PIECES);
+}
+
+function filtrerPieces() {
+  var q = document.getElementById('search-piece').value.toLowerCase();
+  afficherPieces(q ? PIECES.filter(function(p){ return p.nom.toLowerCase().includes(q) || p.ref.toLowerCase().includes(q) || p.machine.toLowerCase().includes(q); }) : PIECES);
+}
+
+function afficherPieces(data) {
+  // KPIs
+  document.getElementById('pc-tot').textContent  = PIECES.length;
+  document.getElementById('pc-ok').textContent   = PIECES.filter(function(p){ return p.stock > p.stockMin; }).length;
+  document.getElementById('pc-low').textContent  = PIECES.filter(function(p){ return p.stock > 0 && p.stock <= p.stockMin; }).length;
+  document.getElementById('pc-zero').textContent = PIECES.filter(function(p){ return p.stock === 0; }).length;
+  var hasAlert = PIECES.some(function(p){ return p.stock <= p.stockMin; });
+  document.getElementById('alerte-stock').style.display = hasAlert ? 'block' : 'none';
+
+  if (!data.length) {
+    document.getElementById('liste-pieces').innerHTML = '<div style="text-align:center;padding:40px;color:#718096">Aucune piece trouvee</div>';
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var p = data[i];
+    var etat = p.stock === 0 ? 'zero' : p.stock <= p.stockMin ? 'low' : 'ok';
+    var etatTxt = p.stock === 0 ? 'Rupture de stock' : p.stock <= p.stockMin ? 'Stock faible' : 'En stock';
+    var valStock = p.prix > 0 ? (p.stock * p.prix).toLocaleString('fr-FR') + ' MAD' : '—';
+
+    // Historique des 3 derniers mouvements
+    var histHtml = '';
+    if (p.historique.length) {
+      var last = p.historique.slice(-3).reverse();
+      histHtml = '<div style="margin-top:10px;border-top:1px solid #F0F4F8;padding-top:8px">';
+      histHtml += '<div style="font-size:10px;color:#718096;font-weight:700;text-transform:uppercase;margin-bottom:6px">Derniers mouvements</div>';
+      for (var k = 0; k < last.length; k++) {
+        var mv = last[k];
+        var col = mv.type === 'sortie' ? '#E53E3E' : '#2ECC8F';
+        var sign = mv.type === 'sortie' ? '-' : '+';
+        histHtml += '<div style="display:flex;justify-content:space-between;font-size:12px;color:#718096;margin-bottom:3px">'
+          + '<span>' + mv.date + ' — ' + mv.motif + '</span>'
+          + '<span style="font-weight:700;color:' + col + '">' + sign + mv.qte + '</span>'
+          + '</div>';
+      }
+      histHtml += '</div>';
+    }
+
+    html += '<div class="piece-card ' + etat + '" id="pc-' + p.id + '">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">'
+      + '<div style="flex:1;min-width:200px">'
+      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'
+      + '<div style="font-size:16px;font-weight:700;color:#1A202C">' + p.nom + '</div>'
+      + '<span class="stock-badge ' + etat + '">' + etatTxt + '</span>'
+      + '</div>'
+      + '<div style="font-size:12px;color:#718096;margin-bottom:4px">'
+      + 'Machine : <strong>' + (p.machine || '—') + '</strong>'
+      + (p.ref ? ' &nbsp;|&nbsp; Ref : <strong>' + p.ref + '</strong>' : '')
+      + (p.fournisseur ? ' &nbsp;|&nbsp; Fourn. : <strong>' + p.fournisseur + '</strong>' : '')
+      + '</div>'
+      + '<div style="font-size:12px;color:#718096">'
+      + 'Prix unit. : <strong>' + (p.prix ? p.prix.toLocaleString('fr-FR') + ' MAD' : 'Non renseigne') + '</strong>'
+      + ' &nbsp;|&nbsp; Valeur stock : <strong>' + valStock + '</strong>'
+      + ' &nbsp;|&nbsp; Seuil alerte : <strong>' + p.stockMin + '</strong>'
+      + '</div>'
+      + (p.remarque ? '<div style="font-size:11px;color:#718096;margin-top:4px;font-style:italic">' + p.remarque + '</div>' : '')
+      + '</div>'
+      // Controle stock
+      + '<div style="display:flex;flex-direction:column;align-items:center;gap:8px">'
+      + '<div style="font-size:10px;color:#718096;font-weight:700;text-transform:uppercase">STOCK</div>'
+      + '<div class="stock-ctrl">'
+      + '<button class="stock-btn moins" id="moins-' + p.id + '">−</button>'
+      + '<div class="stock-num" id="stocknum-' + p.id + '">' + p.stock + '</div>'
+      + '<button class="stock-btn plus" id="plus-' + p.id + '">+</button>'
+      + '</div>'
+      + '<div style="display:flex;gap:6px">'
+      + '<button id="mouv-btn-' + p.id + '" style="padding:6px 12px;background:#1B4F8A;color:white;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Mouvement</button>'
+      + '<button id="edit-btn-' + p.id + '" style="padding:6px 12px;background:#F0F4F8;color:#718096;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Modifier</button>'
+      + '</div></div></div>'
+      + histHtml
+      + '</div>';
+  }
+  document.getElementById('liste-pieces').innerHTML = html;
+
+  // Attacher events apres rendu
+  for (var j = 0; j < data.length; j++) {
+    (function(pid) {
+      var bMoins = document.getElementById('moins-' + pid);
+      var bPlus  = document.getElementById('plus-'  + pid);
+      var bMouv  = document.getElementById('mouv-btn-' + pid);
+      var bEdit  = document.getElementById('edit-btn-' + pid);
+      if (bMoins) bMoins.addEventListener('click', function() { quickStock(pid, -1); });
+      if (bPlus)  bPlus.addEventListener('click',  function() { quickStock(pid, +1); });
+      if (bMouv)  bMouv.addEventListener('click',  function() { ouvrirMouvement(pid); });
+      if (bEdit)  bEdit.addEventListener('click',  function() { ouvrirEditPiece(pid); });
+    })(data[j].id);
+  }
+}
+
+// Ajout rapide +1/-1 sans modal
+function quickStock(id, delta) {
+  var p = PIECES.find(function(x){ return x.id === id; });
+  if (!p) return;
+  var nvStock = p.stock + delta;
+  if (nvStock < 0) { showToast('Stock ne peut pas etre negatif', '#E53E3E'); return; }
+  p.stock = nvStock;
+  // Enregistrer dans historique
+  var motif = delta < 0 ? 'Sortie rapide' : 'Entree rapide';
+  p.historique.push({ date: new Date().toLocaleDateString('fr-FR'), type: delta < 0 ? 'sortie' : 'entree', qte: Math.abs(delta), motif: motif });
+  afficherPieces(PIECES);
+  showToast((delta > 0 ? '+1 ' : '-1 ') + p.nom, delta > 0 ? '#2ECC8F' : '#E53E3E');
+}
+
+// Mouvement de stock complet
+function ouvrirMouvement(id) {
+  var p = PIECES.find(function(x){ return x.id === id; });
+  if (!p) return;
+  document.getElementById('mouv-id').value = id;
+  document.getElementById('mouv-nom').textContent = p.nom;
+  document.getElementById('mouv-ref').textContent = 'Ref : ' + (p.ref || 'Non renseignee') + ' | Stock actuel : ' + p.stock;
+  document.getElementById('mouv-qte').value = 1;
+  document.getElementById('mouv-motif').value = '';
+  setMouvType('sortie');
+  openModal('m-mouv');
+}
+
+function setMouvType(type) {
+  mouvType = type;
+  var bS = document.getElementById('mouv-type-sortie');
+  var bE = document.getElementById('mouv-type-entree');
+  if (type === 'sortie') {
+    bS.style.background = '#FFF5F5'; bS.style.color = '#E53E3E'; bS.style.border = '2px solid #E53E3E';
+    bE.style.background = 'white';   bE.style.color = '#718096'; bE.style.border = '2px solid #E2E8F0';
+  } else {
+    bE.style.background = '#E6FAF3'; bE.style.color = '#1a7a54'; bE.style.border = '2px solid #2ECC8F';
+    bS.style.background = 'white';   bS.style.color = '#718096'; bS.style.border = '2px solid #E2E8F0';
+  }
+}
+
+function confirmerMouvement() {
+  var id    = parseInt(document.getElementById('mouv-id').value);
+  var qte   = parseInt(document.getElementById('mouv-qte').value) || 0;
+  var motif = document.getElementById('mouv-motif').value.trim() || (mouvType === 'sortie' ? 'Utilisation' : 'Commande recue');
+  var p = PIECES.find(function(x){ return x.id === id; });
+  if (!p) return;
+  if (qte <= 0) { alert('Entrez une quantite valide'); return; }
+  if (mouvType === 'sortie' && qte > p.stock) { alert('Stock insuffisant (' + p.stock + ' disponible)'); return; }
+  p.stock += (mouvType === 'sortie' ? -qte : qte);
+  p.historique.push({ date: new Date().toLocaleDateString('fr-FR'), type: mouvType, qte: qte, motif: motif });
+  closeModal('m-mouv');
+  afficherPieces(PIECES);
+  showToast((mouvType === 'sortie' ? 'Sortie' : 'Entree') + ' : ' + qte + 'x ' + p.nom, mouvType === 'sortie' ? '#E53E3E' : '#2ECC8F');
+}
+
+// Ajouter / Modifier piece
+function ouvrirAjoutPiece() {
+  document.getElementById('m-pc-tit').textContent = 'Ajouter une piece';
+  document.getElementById('pc-edit-id').value = '';
+  document.getElementById('pc-ref').value  = '';
+  document.getElementById('pc-nom').value  = '';
+  document.getElementById('pc-machine').value = '';
+  document.getElementById('pc-prix').value = '';
+  document.getElementById('pc-stock').value = '';
+  document.getElementById('pc-min').value = '1';
+  document.getElementById('pc-fourn').value = '';
+  document.getElementById('pc-rem').value = '';
+  openModal('m-pc');
+}
+
+function ouvrirEditPiece(id) {
+  var p = PIECES.find(function(x){ return x.id === id; });
+  if (!p) return;
+  document.getElementById('m-pc-tit').textContent = 'Modifier la piece';
+  document.getElementById('pc-edit-id').value = id;
+  document.getElementById('pc-ref').value   = p.ref;
+  document.getElementById('pc-nom').value   = p.nom;
+  document.getElementById('pc-machine').value = p.machine;
+  document.getElementById('pc-prix').value  = p.prix || '';
+  document.getElementById('pc-stock').value = p.stock;
+  document.getElementById('pc-min').value  = p.stockMin;
+  document.getElementById('pc-fourn').value = p.fournisseur;
+  document.getElementById('pc-rem').value  = p.remarque;
+  openModal('m-pc');
+}
+
+function sauvegarderPiece() {
+  var editId = document.getElementById('pc-edit-id').value;
+  var ref   = document.getElementById('pc-ref').value.trim();
+  var nom   = document.getElementById('pc-nom').value.trim();
+  var mach  = document.getElementById('pc-machine').value;
+  var prix  = parseFloat(document.getElementById('pc-prix').value) || 0;
+  var stock = parseInt(document.getElementById('pc-stock').value) || 0;
+  var min   = parseInt(document.getElementById('pc-min').value) || 1;
+  var fourn = document.getElementById('pc-fourn').value.trim();
+  var rem   = document.getElementById('pc-rem').value.trim();
+  if (!nom) { alert('La designation est obligatoire'); return; }
+
+  if (editId) {
+    var p = PIECES.find(function(x){ return x.id === parseInt(editId); });
+    if (p) { p.ref=ref; p.nom=nom; p.machine=mach; p.prix=prix; p.stock=stock; p.stockMin=min; p.fournisseur=fourn; p.remarque=rem; }
+    showToast(nom + ' mis a jour', '#2ECC8F');
+  } else {
+    PIECES.push({ id: PC_CTR++, ref:ref, nom:nom, machine:mach, prix:prix, stock:stock, stockMin:min, fournisseur:fourn, remarque:rem, historique:[] });
+    showToast(nom + ' ajoute au stock', '#2ECC8F');
+  }
+  closeModal('m-pc');
+  afficherPieces(PIECES);
+}
+
+// ====================== OPTIMISATION TECHNICO-ECONOMIQUE ======================
+
+var MODALITES = [
+  {
+    id: 1, nom: 'Affiniti 50G', nbEquip: 6, nbPannes: 2,
+    pannesDetail: ['US720D1272 : Changement sonde L12-5', 'US720D1270 : Probleme reseau - resolu'],
+    contrat: 0, coutPieces: 0, coutMO: 0, typeContrat: '',
+    couleur: '#1B4F8A'
+  },
+  {
+    id: 2, nom: 'Affiniti 70G', nbEquip: 1, nbPannes: 1,
+    pannesDetail: ['US720F1439 : Echo Nav - Sonde C5-1 + Prevoir L12-3 + Filtre'],
+    contrat: 0, coutPieces: 0, coutMO: 0, typeContrat: '',
+    couleur: '#E53E3E'
+  },
+  {
+    id: 3, nom: 'Affiniti 70C', nbEquip: 9, nbPannes: 2,
+    pannesDetail: ['US720F1435 : Manque Onduleur + Disque Dur plein', 'US720F1436 : Changement Gas spring'],
+    contrat: 0, coutPieces: 0, coutMO: 0, typeContrat: '',
+    couleur: '#7B2D8B'
+  },
+  {
+    id: 4, nom: 'CX50', nbEquip: 7, nbPannes: 5,
+    pannesDetail: [
+      'SG82000055 : Changement Power reg + EBOX + SSD + Batterie',
+      'SG82000054 : Prevoir Batterie + SSD',
+      'SG82000059 : Changement bloc alim + Batterie',
+      'SG82000049 : Changement batterie',
+      'SG82000056 : Changement batterie'
+    ],
+    contrat: 0, coutPieces: 0, coutMO: 0, typeContrat: '',
+    couleur: '#F6AD55'
+  },
+  {
+    id: 5, nom: 'Innosight', nbEquip: 4, nbPannes: 0,
+    pannesDetail: [],
+    contrat: 0, coutPieces: 0, coutMO: 0, typeContrat: '',
+    couleur: '#2ECC8F'
+  },
+];
+
+function initOptim() {
+  afficherGraphPannes();
+  afficherModalites();
+}
+
+function afficherGraphPannes() {
+  var maxP = Math.max.apply(null, MODALITES.map(function(m){ return m.nbEquip; }));
+  var html = MODALITES.map(function(m) {
+    var txPanne = m.nbEquip > 0 ? ((m.nbPannes / m.nbEquip) * 100).toFixed(0) : 0;
+    var wEquip  = Math.round((m.nbEquip  / maxP) * 100);
+    var wPanne  = Math.round((m.nbPannes / maxP) * 100);
+    return '<div style="margin-bottom:12px">'
+      + '<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px">'
+      + '<span>' + m.nom + '</span>'
+      + '<span style="color:#718096">' + m.nbPannes + ' panne(s) / ' + m.nbEquip + ' equip. — Taux: <strong style="color:' + (txPanne > 50 ? '#E53E3E' : txPanne > 20 ? '#F6AD55' : '#2ECC8F') + '">' + txPanne + '%</strong></span>'
+      + '</div>'
+      + '<div style="display:flex;gap:6px;align-items:center">'
+      + '<div style="font-size:10px;color:#718096;width:60px">Equip.</div>'
+      + '<div style="flex:1;height:16px;background:#F0F4F8;border-radius:4px;overflow:hidden">'
+      + '<div style="height:100%;background:' + m.couleur + ';width:' + wEquip + '%;border-radius:4px;opacity:.4"></div></div>'
+      + '<div style="font-size:11px;color:#718096;width:24px;text-align:right">' + m.nbEquip + '</div>'
+      + '</div>'
+      + '<div style="display:flex;gap:6px;align-items:center;margin-top:3px">'
+      + '<div style="font-size:10px;color:#718096;width:60px">Pannes</div>'
+      + '<div style="flex:1;height:16px;background:#F0F4F8;border-radius:4px;overflow:hidden">'
+      + '<div style="height:100%;background:' + m.couleur + ';width:' + wPanne + '%;border-radius:4px"></div></div>'
+      + '<div style="font-size:11px;font-weight:700;color:' + m.couleur + ';width:24px;text-align:right">' + m.nbPannes + '</div>'
+      + '</div></div>';
+  }).join('');
+  document.getElementById('graph-pannes').innerHTML = html;
+}
+
+function afficherModalites() {
+  var html = '';
+  for (var i = 0; i < MODALITES.length; i++) {
+    var m = MODALITES[i];
+    var txP = m.nbEquip > 0 ? ((m.nbPannes / m.nbEquip) * 100).toFixed(1) : 0;
+    var pannesHtml = m.pannesDetail.length
+      ? m.pannesDetail.map(function(p){ return '<div style="font-size:12px;color:#718096;padding:3px 0;border-bottom:1px solid #F0F4F8">• ' + p + '</div>'; }).join('')
+      : '<div style="font-size:12px;color:#2ECC8F">Aucune panne enregistree</div>';
+
+    html += '<div class="optim-card">'
+      + '<div class="optim-hdr">'
+      + '<div style="display:flex;align-items:center;gap:12px">'
+      + '<div style="width:14px;height:40px;border-radius:4px;background:' + m.couleur + '"></div>'
+      + '<div>'
+      + '<div style="font-size:17px;font-weight:700;color:#1A202C">' + m.nom + '</div>'
+      + '<div style="font-size:12px;color:#718096;margin-top:2px">' + m.nbEquip + ' equipements — ' + m.nbPannes + ' panne(s) — Taux : <strong>' + txP + '%</strong></div>'
+      + '</div></div>'
+      + '<div id="score-' + m.id + '" style="display:none" class="score-cercle"></div>'
+      + '</div>'
+
+      // Pannes detail
+      + '<div style="background:#F7FAFC;border-radius:8px;padding:10px;margin-bottom:14px">'
+      + '<div style="font-size:11px;color:#718096;font-weight:700;text-transform:uppercase;margin-bottom:6px">Pannes identifiees (Parc CHUT)</div>'
+      + pannesHtml + '</div>'
+
+      // Saisie economique
+      + '<div style="font-size:11px;color:#1B4F8A;font-weight:700;text-transform:uppercase;margin-bottom:8px">Donnees economiques — A saisir</div>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">'
+      + '<div><label style="font-size:10px;color:#718096;font-weight:700;display:block;margin-bottom:4px">TYPE CONTRAT</label>'
+      + '<select id="tc-' + m.id + '" class="optim-inp" style="padding:9px 10px">'
+      + '<option value="">-- Choisir --</option>'
+      + '<option value="Tout inclus">Tout inclus</option>'
+      + '<option value="Pieces incluses">Pieces incluses</option>'
+      + '<option value="MO seule">Main oeuvre seule</option>'
+      + '<option value="Preventif">Preventif uniquement</option>'
+      + '</select></div>'
+      + '<div><label style="font-size:10px;color:#718096;font-weight:700;display:block;margin-bottom:4px">PRIX CONTRAT ANNUEL (MAD)</label>'
+      + '<input type="number" id="ct-' + m.id + '" class="optim-inp" placeholder="Ex: 85000" min="0"></div>'
+      + '<div><label style="font-size:10px;color:#718096;font-weight:700;display:block;margin-bottom:4px">COUT PIECES (MAD)</label>'
+      + '<input type="number" id="cp-' + m.id + '" class="optim-inp" placeholder="Ex: 15000" min="0"></div>'
+      + '<div><label style="font-size:10px;color:#718096;font-weight:700;display:block;margin-bottom:4px">COUT MAIN D OEUVRE (MAD)</label>'
+      + '<input type="number" id="cm-' + m.id + '" class="optim-inp" placeholder="Ex: 6000" min="0"></div>'
+      + '<div><label style="font-size:10px;color:#718096;font-weight:700;display:block;margin-bottom:4px">MTTR MOYEN (heures)</label>'
+      + '<input type="number" id="mt-' + m.id + '" class="optim-inp" placeholder="Ex: 3.5" min="0" step="0.5"></div>'
+      + '<div><label style="font-size:10px;color:#718096;font-weight:700;display:block;margin-bottom:4px">DISPONIBILITE MOYENNE (%)</label>'
+      + '<input type="number" id="di-' + m.id + '" class="optim-inp" placeholder="Ex: 95" min="0" max="100"></div>'
+      + '</div>'
+      + '<button id="calc-btn-' + m.id + '" style="padding:10px 20px;background:#1B4F8A;color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Calculer le score</button>'
+      + '<div id="result-' + m.id + '" style="display:none;margin-top:14px"></div>'
+      + '</div>';
+  }
+  document.getElementById('liste-modalites').innerHTML = html;
+
+  // Attacher les events
+  for (var j = 0; j < MODALITES.length; j++) {
+    (function(mid) {
+      var btn = document.getElementById('calc-btn-' + mid);
+      if (btn) btn.addEventListener('click', function() { calculerModalite(mid); });
+    })(MODALITES[j].id);
+  }
+}
+
+function calculerModalite(id) {
+  var m = MODALITES.find(function(x){ return x.id === id; });
+  if (!m) return;
+
+  var ct  = parseFloat(document.getElementById('ct-' + id).value) || 0;
+  var cp  = parseFloat(document.getElementById('cp-' + id).value) || 0;
+  var cmo = parseFloat(document.getElementById('cm-' + id).value) || 0;
+  var mt  = parseFloat(document.getElementById('mt-' + id).value) || 0;
+  var di  = parseFloat(document.getElementById('di-' + id).value) || 0;
+  var tc  = document.getElementById('tc-' + id).value;
+
+  if (!ct) { alert('Entrez le prix du contrat annuel'); return; }
+
+  // Sauvegarder
+  m.contrat = ct; m.coutPieces = cp; m.coutMO = cmo; m.typeContrat = tc;
+
+  // Calculs
+  var coutTotal = cp + cmo;
+  var marge     = ct - coutTotal;
+  var roi       = coutTotal > 0 ? ((marge / coutTotal) * 100).toFixed(1) : 100;
+  var txPanne   = m.nbEquip > 0 ? (m.nbPannes / m.nbEquip) * 100 : 0;
+  var coutParEquip = m.nbEquip > 0 ? Math.round(coutTotal / m.nbEquip) : 0;
+
+  // Score optimisation (0-100)
+  var scoreRoi   = Math.min(Math.max(parseFloat(roi), -50), 100);
+  var scoreDispo = di || 0;
+  var scorePanne = Math.max(0, 100 - txPanne * 2);
+  var score = Math.round((scoreRoi * 0.4) + (scoreDispo * 0.4) + (scorePanne * 0.2));
+  score = Math.max(0, Math.min(100, score));
+
+  m.score = score; m.roi = roi; m.marge = marge; m.coutTotal = coutTotal;
+
+  var scoreBg  = score >= 70 ? '#2ECC8F' : score >= 40 ? '#F6AD55' : '#E53E3E';
+  var scoreEl  = document.getElementById('score-' + id);
+  scoreEl.style.display = 'flex';
+  scoreEl.style.background = scoreBg;
+  scoreEl.textContent = score;
+
+  var recoClass = score >= 70 ? 'vert' : score >= 40 ? 'orange' : 'rouge';
+  var recoTxt = score >= 70
+    ? 'Modalite optimale — Bonne rentabilite et disponibilite. Maintenir la strategie de maintenance actuelle.'
+    : score >= 40
+    ? 'Modalite a ameliorer — Envisager la renégociation du contrat ou la reduction des couts pieces.'
+    : 'Modalite critique — Contrat deficitaire ou taux de panne eleve. Action corrective urgente recommandee.';
+
+  var resultHtml = '<div class="mttr-grid">'
+    + '<div class="mttr-item"><div class="mttr-val">' + ct.toLocaleString('fr-FR') + '</div><div class="mttr-lbl">Contrat MAD/an</div></div>'
+    + '<div class="mttr-item"><div class="mttr-val">' + coutTotal.toLocaleString('fr-FR') + '</div><div class="mttr-lbl">Cout maintenance</div></div>'
+    + '<div class="mttr-item"><div class="mttr-val" style="color:' + (marge > 0 ? '#2ECC8F' : '#E53E3E') + '">' + marge.toLocaleString('fr-FR') + '</div><div class="mttr-lbl">Marge MAD</div></div>'
+    + '<div class="mttr-item"><div class="mttr-val" style="color:' + (parseFloat(roi) > 0 ? '#2ECC8F' : '#E53E3E') + '">' + roi + '%</div><div class="mttr-lbl">ROI</div></div>'
+    + (coutParEquip ? '<div class="mttr-item"><div class="mttr-val">' + coutParEquip.toLocaleString('fr-FR') + '</div><div class="mttr-lbl">Cout / equip.</div></div>' : '')
+    + (mt ? '<div class="mttr-item"><div class="mttr-val">' + mt + 'h</div><div class="mttr-lbl">MTTR moyen</div></div>' : '')
+    + (di ? '<div class="mttr-item"><div class="mttr-val">' + di + '%</div><div class="mttr-lbl">Disponibilite</div></div>' : '')
+    + '<div class="mttr-item"><div class="mttr-val" style="color:' + scoreBg + '">' + score + '/100</div><div class="mttr-lbl">Score optim.</div></div>'
+    + '</div>'
+    + '<div class="reco-box ' + recoClass + '"><strong>Recommandation :</strong> ' + recoTxt + '</div>';
+
+  document.getElementById('result-' + id).style.display = 'block';
+  document.getElementById('result-' + id).innerHTML = resultHtml;
+
+  majSynthese();
+  majRecommandations();
+  majDispoGlob();
+  showToast('Score ' + m.nom + ' : ' + score + '/100', scoreBg);
+}
+
+function majDispoGlob() {
+  var tous = MODALITES.filter(function(m){ return m.score !== undefined; });
+  if (!tous.length) return;
+  var scores = tous.map(function(m){ return m.score; });
+  var moy = (scores.reduce(function(a,b){ return a+b; },0) / scores.length).toFixed(0);
+  document.getElementById('opt-dispo-glob').textContent = moy + '/100';
+}
+
+function majSynthese() {
+  var calcules = MODALITES.filter(function(m){ return m.score !== undefined; });
+  if (!calcules.length) return;
+
+  var tS = function(s){ return s>=70?'<span class="tag tg">'+s+'</span>':s>=40?'<span class="tag to">'+s+'</span>':'<span class="tag tr">'+s+'</span>'; };
+  document.getElementById('synthese-body').innerHTML = calcules
+    .sort(function(a,b){ return b.score - a.score; })
+    .map(function(m){
+      var txP = m.nbEquip > 0 ? ((m.nbPannes/m.nbEquip)*100).toFixed(0)+'%' : '0%';
+      return '<tr>'
+        + '<td><strong>' + m.nom + '</strong></td>'
+        + '<td style="text-align:center">' + m.nbEquip + '</td>'
+        + '<td style="text-align:center">' + m.nbPannes + '</td>'
+        + '<td style="text-align:center;font-weight:700;color:' + (m.nbPannes/m.nbEquip>0.5?'#E53E3E':m.nbPannes/m.nbEquip>0.2?'#F6AD55':'#2ECC8F') + '">' + txP + '</td>'
+        + '<td>' + m.contrat.toLocaleString('fr-FR') + ' MAD</td>'
+        + '<td>' + m.coutTotal.toLocaleString('fr-FR') + ' MAD</td>'
+        + '<td style="color:' + (m.marge>0?'#1a7a54':'#E53E3E') + ';font-weight:700">' + m.marge.toLocaleString('fr-FR') + ' MAD</td>'
+        + '<td style="color:' + (parseFloat(m.roi)>0?'#1a7a54':'#E53E3E') + ';font-weight:700">' + m.roi + '%</td>'
+        + '<td>' + tS(m.score) + '</td>'
+        + '</tr>';
+    }).join('');
+}
+
+function majRecommandations() {
+  var calcules = MODALITES.filter(function(m){ return m.score !== undefined; });
+  if (!calcules.length) return;
+
+  var meilleur = calcules.reduce(function(a,b){ return a.score>b.score?a:b; });
+  var pire     = calcules.reduce(function(a,b){ return a.score<b.score?a:b; });
+  var plusPannes = calcules.reduce(function(a,b){ return (a.nbPannes/a.nbEquip)>(b.nbPannes/b.nbEquip)?a:b; });
+  var deficitaire = calcules.filter(function(m){ return m.marge < 0; });
+
+  var html = '';
+
+  html += '<div class="reco-box vert" style="margin-bottom:10px">'
+    + '<strong>Modalite la plus optimale : ' + meilleur.nom + ' (Score ' + meilleur.score + '/100)</strong><br>'
+    + 'Maintenir la strategie de maintenance actuelle. Peut servir de reference pour les autres modalites.'
+    + '</div>';
+
+  if (deficitaire.length) {
+    html += '<div class="reco-box rouge" style="margin-bottom:10px">'
+      + '<strong>Contrats deficitaires : ' + deficitaire.map(function(m){ return m.nom; }).join(', ') + '</strong><br>'
+      + 'Le cout de maintenance depasse le prix du contrat. Renegocier les conditions contractuelles ou reduire les couts operationnels.'
+      + '</div>';
+  }
+
+  html += '<div class="reco-box orange" style="margin-bottom:10px">'
+    + '<strong>Modalite avec le plus de pannes : ' + plusPannes.nom + ' (' + plusPannes.nbPannes + ' pannes / ' + plusPannes.nbEquip + ' equip.)</strong><br>'
+    + 'Mettre en place un plan de maintenance preventive systematique. Constituer un stock de pieces critiques (Batterie, SSD, EBOX).'
+    + '</div>';
+
+  if (calcules.length >= 3) {
+    var moy = (calcules.reduce(function(s,m){ return s+m.score; },0)/calcules.length).toFixed(0);
+    html += '<div style="background:#F0F4F8;border-radius:10px;padding:12px;font-size:13px;color:#1A202C">'
+      + '<strong>Score moyen du parc : ' + moy + '/100</strong><br>'
+      + 'Budget total maintenance : <strong>' + calcules.reduce(function(s,m){ return s+m.coutTotal; },0).toLocaleString('fr-FR') + ' MAD</strong> | '
+      + 'Revenus contrats : <strong>' + calcules.reduce(function(s,m){ return s+m.contrat; },0).toLocaleString('fr-FR') + ' MAD</strong> | '
+      + 'Marge globale : <strong style="color:' + (calcules.reduce(function(s,m){ return s+m.marge; },0)>0?'#1a7a54':'#E53E3E') + '">'
+      + calcules.reduce(function(s,m){ return s+m.marge; },0).toLocaleString('fr-FR') + ' MAD</strong>'
+      + '</div>';
+  }
+
+  document.getElementById('recommandations').innerHTML = html;
+}
+
+
+</script>
+</body>
+</html>
